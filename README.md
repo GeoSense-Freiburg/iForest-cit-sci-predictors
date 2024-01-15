@@ -58,7 +58,7 @@ Project Organization
 
 ## Installation
 
-### 1. Clone this projectrepository
+### 1. Clone this project repository
 ```bash
 git clone https://github.com/dluks/iForest-cit-sci-predictors.git
 
@@ -67,14 +67,10 @@ cd iForest-cit-sci-predictors
 
 ### 2. Install poetry and DVC.
 Use `pipx` to install CLI requirements in isolated environments so to avoid dependency conflicts between the CLI tools and the project-specific requirements.
-> [!NOTE]
-> Omit `dvc` installation if you won't be using DVC for data versioning.
 
-> [!WARNING]
-> Update this README with the specific poetry version after installation to avoid conflicts during collaboration (e.g. `pipx install poetry==1.7`)
 ```bash
-pipx install poetry
-pipx install dvc
+pipx install poetry==1.7
+pipx install dvc==3.39
 ```
 
  >[!NOTE]
@@ -85,12 +81,11 @@ pipx install dvc
 
 ### 3. Create a virtual environment
 ```bash
-conda create -n your-project -c conda-forge python=3.10
-conda activate your-project
+conda create -n if-cit-sci-feats -c conda-forge python=3.10
+conda activate if-cit-sci-feats
 ```
 
 ### 4. Install requirements
-This checks to confirm python and conda environment setup. If on Windows, or if you'd simply prefer not to use `make`, you can use `poetry install` instead.
 ```bash
 poetry install
 ```

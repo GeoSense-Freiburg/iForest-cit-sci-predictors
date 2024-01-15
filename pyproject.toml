@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "geosci-boilerplate"
+name = "iForest prestudy: citizen-science predictors"
 version = "0.1.0"
-description = "A geoscience project template."
+description = "Citizen science predictors (based on GBIF) matched to Sentinel-2 grids for the iForest prestudy. "
 authors = ["Daniel Lusk"]
 license = "MIT"
 readme = "README.md"

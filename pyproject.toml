@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "geosci-boilerplate"
+version = "0.1.0"
+description = "A geoscience project template."
+authors = ["Daniel Lusk"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "~3.10"
+python-dotenv = "^1.0.0"
+click = "^8.1.7"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.6.0"
+pytest = "^7.4.4"
+pylint = "^3.0.3"
+pylint-pytest = "^1.1.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -2,7 +2,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="eo-data",
+    name="iforest-cit-sci-feats",
     packages=find_packages(),
     version="0.1.0",
     description="A registry of Earth observation datasets used in the Geosense lab",

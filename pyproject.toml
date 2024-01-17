@@ -1,11 +1,12 @@
 [tool.poetry]
-name = "iForest prestudy: citizen-science predictors"
+name = "iforest-cit-sci-feats"
 version = "0.1.0"
 description = "Citizen science predictors (based on GBIF) matched to Sentinel-2 grids for the iForest prestudy. "
 authors = ["Daniel Lusk"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "src"}]
+repository = "https://github.com/dluks/iforest-cit-sci-feats"
+packages = [{include = "iforest_cit_sci_feats", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "~3.10"

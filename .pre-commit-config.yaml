@@ -12,3 +12,8 @@ repos:
         language: system
         types: [python]
         args: ["--errors-only"]
+      - id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        types: [python]

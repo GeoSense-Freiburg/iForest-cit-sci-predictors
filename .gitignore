@@ -95,3 +95,4 @@ target/
 
 # Local History for Visual Studio Code
 .history/
+.local_gitignore

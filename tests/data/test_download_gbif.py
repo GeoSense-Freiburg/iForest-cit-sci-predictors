@@ -103,13 +103,13 @@ def fixture_gbif_download_meta_running() -> dict:
 @pytest.fixture(name="gbif_download_meta_success")
 def fixture_gbif_download_meta_success(gbif_download_meta_running) -> dict:
     """Sample GBIF download meta in a SUCCEEDED state."""
-    return gbif_download_meta_running.update({"status": "SUCCEEDED"})
+    return {**gbif_download_meta_running, "status": "SUCCEEDED"}
 
 
 @pytest.fixture(name="gbif_download_meta_failed")
 def fixture_gbif_download_meta_failed(gbif_download_meta_running) -> dict:
     """Sample GBIF download meta in a FAILED state."""
-    return gbif_download_meta_running.update({"status": "SUCCEEDED"})
+    return {**gbif_download_meta_running, "status": "FAILED"}
 
 
 def test_init_gbif_download(monkeypatch, gbif_query, gbif_download_info):
@@ -126,16 +126,31 @@ def test_init_gbif_download(monkeypatch, gbif_query, gbif_download_info):
 
 
 def test_check_download_status(
-    monkeypatch, gbif_download_info, gbif_download_meta_running
+    monkeypatch,
+    gbif_download_info,
+    gbif_download_meta_running,
+    gbif_download_meta_success,
+    gbif_download_meta_failed,
 ):
     """Test check_download_status"""
 
-    def mock_download_meta(*args, **kwargs):
+    def mock_download_meta_running(*args, **kwargs):
         return gbif_download_meta_running
 
-    monkeypatch.setattr(occ, "download_meta", mock_download_meta)
+    def mock_download_meta_succeeded(*args, **kwargs):
+        return gbif_download_meta_success
 
+    def mock_download_meta_failed(*args, **kwargs):
+        return gbif_download_meta_failed
+
+    monkeypatch.setattr(occ, "download_meta", mock_download_meta_running)
     assert check_download_status(gbif_download_info[0]) == "RUNNING"
+
+    monkeypatch.setattr(occ, "download_meta", mock_download_meta_succeeded)
+    assert check_download_status(gbif_download_info[0]) == "SUCCEEDED"
+
+    monkeypatch.setattr(occ, "download_meta", mock_download_meta_failed)
+    assert check_download_status(gbif_download_info[0]) == "FAILED"
 
 
 def test_set_download_path(tmp_path, gbif_download_info):

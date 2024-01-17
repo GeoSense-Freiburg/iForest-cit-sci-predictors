@@ -12,6 +12,9 @@ packages = [{include = "iforest_cit_sci_feats", from = "src"}]
 python = "~3.10"
 python-dotenv = "^1.0.0"
 click = "^8.1.7"
+pygbif = "^0.6.3"
+ipykernel = "^6.29.0"
+tqdm = "^4.66.1"
 
 
 [tool.poetry.group.dev.dependencies]

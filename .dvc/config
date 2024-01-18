@@ -1,2 +1,4 @@
 [core]
-    autostage = true
+    remote = if-cit-sci
+['remote "if-cit-sci"']
+    url = ../data

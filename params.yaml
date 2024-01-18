@@ -1,0 +1,4 @@
+gbif:
+  query: references/gbif/query_all_tracheophyta.json
+  output: data/raw/gbif
+  query_name: all_tracheophyta

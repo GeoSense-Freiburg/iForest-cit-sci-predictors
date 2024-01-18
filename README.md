@@ -101,3 +101,12 @@ pre-commit install
 > pre-commit uninstall  # if you already installed pre-commit hooks
 > poetry remove pre-commit
 > ```
+
+## Usage
+
+Download GBIF data using DVC or manually.
+```bash
+dvc repro download_gbif
+# OR
+python src/iforest_cit_sci_feats/data/download_gbif.py -q references/gbif/query_all_tracheophyta.json -n all_tracheophyta -o data/raw/gbif
+```

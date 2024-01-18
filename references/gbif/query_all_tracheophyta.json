@@ -1,0 +1,18 @@
+{
+  "type": "and",
+  "predicates": [
+    {
+      "type": "equals",
+      "key": "TAXON_KEY",
+      "value": "7707728"
+    },
+    {
+      "type": "not",
+      "predicate": {
+        "type": "in",
+        "key": "DEGREE_OF_ESTABLISHMENT",
+        "values": ["cultivated"]
+      }
+    }
+  ]
+}

@@ -47,7 +47,6 @@ def download_request_to_disk(key: str, output_path: Path) -> None:
                     if chunk:
                         progress_bar.update(len(chunk))
                         f.write(chunk)
-        # delete partial file on timeout or ctrl-c exception
         except (requests.exceptions.Timeout, KeyboardInterrupt):
             if output_path.exists():
                 output_path.unlink()

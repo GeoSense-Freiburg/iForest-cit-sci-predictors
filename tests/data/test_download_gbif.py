@@ -5,10 +5,16 @@ import pytest
 from pygbif import occurrences as occ
 
 from iforest_cit_sci_feats.data.download_gbif import (
+    GbifDownloadFailure,
+    check_download_job_and_download_file,
     check_download_status,
+    download_request_to_disk,
     init_gbif_download,
     set_download_path,
 )
+
+# Define the module name to be used for mocking
+TESTED_MODULE = "iforest_cit_sci_feats.data.download_gbif"
 
 
 @pytest.fixture(name="gbif_query")
@@ -112,6 +118,27 @@ def fixture_gbif_download_meta_failed(gbif_download_meta_running) -> dict:
     return {**gbif_download_meta_running, "status": "FAILED"}
 
 
+@pytest.fixture(name="mock_download_meta")
+def fixture_mock_download_meta(monkeypatch, gbif_download_meta_success: dict):
+    """Mock pygbif.occ.download_meta to return a successful download meta."""
+
+    def _mock_download_meta(*args, **kwargs):
+        return gbif_download_meta_success
+
+    monkeypatch.setattr(occ, "download_meta", _mock_download_meta)
+
+
+@pytest.fixture(name="mock_download_get")
+def fixture_mock_download_get(monkeypatch):
+    """Mock pygbif.occ.download_get to write a file to output_path."""
+
+    def _mock_download_get(*args, **kwargs):
+        with open(args[1], "wb") as f:
+            f.write(b"test")
+
+    monkeypatch.setattr(occ, "download_get", _mock_download_get)
+
+
 def test_init_gbif_download(monkeypatch, gbif_query, gbif_download_info):
     """Test init_gbif_download"""
 
@@ -184,3 +211,38 @@ def test_set_download_path(tmp_path, gbif_download_info):
     assert set_download_path(tmp_path / f"{dl_key}.zip", dl_key, overwrite=True) == (
         tmp_path / f"{dl_key}.zip"
     )
+
+
+def mock_download_get(
+    _key: str, output_path: Path, *args, **kwargs  # pylint: disable=unused-argument
+) -> None:
+    """Mock pygbif.occurences.download_get to write a throwaway file."""
+    with open(output_path, "wb") as f:
+        f.write(b"test")
+
+
+def test_download_request_to_disk(
+    tmp_path, mocker, gbif_download_info, gbif_download_meta_success
+):
+    """Test download_request_to_disk"""
+    output_path = tmp_path / "tmp.zip"
+    mocker.patch(f"{TESTED_MODULE}.occ.download_get", side_effect=mock_download_get)
+    mocker.patch(
+        f"{TESTED_MODULE}.occ.download_meta", return_value=gbif_download_meta_success
+    )
+    download_request_to_disk(gbif_download_info[0], output_path)
+
+    assert output_path.exists()
+    assert output_path.stat().st_size > 0
+    assert output_path.with_suffix(".json").exists()
+    assert output_path.with_suffix(".json").stat().st_size > 0
+
+
+def test_check_download_job_and_download_file(tmp_path, mocker, gbif_download_info):
+    """Test check_download_job_and_download_file"""
+    output_path = tmp_path / "tmp.zip"
+    mocker.patch(f"{TESTED_MODULE}.check_download_status", return_value="FAILED")
+    with pytest.raises(GbifDownloadFailure) as excinfo:
+        check_download_job_and_download_file(gbif_download_info[0], output_path)
+
+    assert "failed." in str(excinfo.value)

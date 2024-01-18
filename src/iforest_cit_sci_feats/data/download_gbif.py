@@ -5,10 +5,8 @@ import time
 from pathlib import Path
 
 import click
-import requests
 from dotenv import find_dotenv, load_dotenv
 from pygbif import occurrences as occ
-from tqdm import tqdm
 
 
 class GbifDownloadFailure(Exception):
@@ -35,26 +33,9 @@ def check_download_status(key: str) -> str:
 
 def download_request_to_disk(key: str, output_path: Path) -> None:
     """Download a completed GBIF download job's zipfile and metadata."""
-    url = f"https://api.gbif.org/v1/occurrence/download/request/{key}.zip"
+    occ.download_get(key, str(output_path))
 
-    response = requests.get(url, stream=True, timeout=30)
-    total_size = int(response.headers.get("content-length", 0))  # size in bytes
-
-    with tqdm(total=total_size, unit="B", unit_scale=True) as progress_bar:
-        try:
-            with open(output_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=1024):
-                    if chunk:
-                        progress_bar.update(len(chunk))
-                        f.write(chunk)
-        except (requests.exceptions.Timeout, KeyboardInterrupt):
-            if output_path.exists():
-                output_path.unlink()
-            raise
-
-    if total_size not in (0, progress_bar.n):
-        raise RuntimeError("Could not download file!")
-
+    # Also save the metadata alongside the data
     with open(output_path.with_suffix(".json"), "w", encoding="utf-8") as f:
         json.dump(occ.download_meta(key), f)
 
@@ -96,7 +77,53 @@ def set_download_path(path: Path, key: str, overwrite: bool = False) -> Path:
     return path
 
 
+def check_download_job_and_download_file(
+    key: str, output_path: Path, max_hours: int | float = 6
+) -> None:
+    """
+    Checks a pending GBIF download for a given amount of time, downloads the file once
+    it is ready.
+
+    Args:
+        output_path (Path): The path where the downloaded file will be saved.
+        key (str): The key of the GBIF download job to check.
+        max_hours (int | float, optional): The maximum number of hours to wait for the download
+            to complete. Defaults to 6.
+
+    Raises:
+        GbifDownloadFailure: If the download job fails or exceeds the maximum waiting time.
+
+    """
+    start_time = time.time()
+    while True:
+        status = check_download_status(key)
+        if status == "SUCCEEDED":
+            download_request_to_disk(
+                key,
+                output_path,
+            )
+            break
+
+        if status == "FAILED":
+            raise GbifDownloadFailure(f"Download job {key} failed.")
+
+        if time.time() - start_time > max_hours * 60 * 60:
+            output_path.unlink()
+            raise GbifDownloadFailure(
+                f"Download job {key} did not complete within" f"{max_hours}. Aborting"
+            )
+        time.sleep(60)
+
+
 @click.command()
+@click.option(
+    "-q",
+    "--query",
+    "query_file",
+    type=click.Path(path_type=Path),
+    default=Path("references/gbif/all_tracheophyta.json"),
+    show_default=True,
+)
 @click.option(
     "-o",
     "--output",
@@ -108,43 +135,23 @@ def set_download_path(path: Path, key: str, overwrite: bool = False) -> Path:
 @click.option(
     "-w", "--overwrite", "overwrite", type=click.BOOL, default=False, show_default=True
 )
-def main(output_path: Path, overwrite: bool):
+def main(query_file: Path, output_path: Path, overwrite: bool):
     """Check the status of a GBIF download job and download the CSV file once it's ready."""
     log = logging.getLogger(__name__)
-
     load_dotenv(find_dotenv())  # Find local .env to expose GBIF credentials
 
-    tracheophyta_taxon_key = "7707728"
+    if query_file.suffix != ".json":
+        raise ValueError("Query file must be a .json file.")
 
-    all_tracheophyta = {
-        "type": "and",
-        "predicates": [
-            {
-                "type": "equals",
-                "key": "TAXON_KEY",
-                "value": tracheophyta_taxon_key,
-            },
-            {"type": "not", "key": "DEGREE_OF_ESTABLISHMENT", "value": "Cultivated"},
-        ],
-    }
+    with open(query_file, "r", encoding="utf-8") as f:
+        gbif_query = json.load(f)
 
-    download_key = init_gbif_download(all_tracheophyta)
+    download_key = init_gbif_download(gbif_query)
 
-    log.info("Download key: %s", download_key)
     log.info("Checking if download job is ready...")
-    while True:
-        status = check_download_status(download_key)
-        if status == "SUCCEEDED":
-            output_path = set_download_path(output_path, download_key, overwrite)
-            download_request_to_disk(
-                download_key,
-                output_path,
-            )
-            break
-        if status == "FAILED":
-            raise GbifDownloadFailure(f"Download job {download_key} failed.")
-
-        time.sleep(60)  # wait for 60 seconds before checking the status again
+    check_download_job_and_download_file(
+        download_key, set_download_path(output_path, download_key, overwrite)
+    )
 
 
 if __name__ == "__main__":

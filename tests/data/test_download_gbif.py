@@ -10,7 +10,6 @@ from iforest_cit_sci_feats.data.download_gbif import (
     check_download_status,
     download_request_to_disk,
     init_gbif_download,
-    set_download_path,
 )
 
 # Define the module name to be used for mocking
@@ -180,44 +179,12 @@ def test_check_download_status(
     assert check_download_status(gbif_download_info[0]) == "FAILED"
 
 
-def test_set_download_path(tmp_path, gbif_download_info):
-    """Test set_download_path"""
-    dl_key = gbif_download_info[0]
-
-    # Test with directory
-    assert set_download_path(tmp_path, dl_key) == tmp_path / f"{dl_key}.zip"
-
-    # Test with nonexistent directory
-    with pytest.raises(FileNotFoundError):
-        set_download_path(Path("definitely/not/a/dir"), dl_key)
-
-    # Test with file w/ nonexistent directory
-    with pytest.raises(FileNotFoundError):
-        set_download_path(Path("definitely/not/a/dir") / "test.zip", dl_key)
-
-    # Test w/o .zip
-    with pytest.raises(ValueError):
-        set_download_path(tmp_path / "test", dl_key)
-
-    # Test when file exists but overwrite is false
-    with pytest.raises(FileExistsError):
-        with open(tmp_path / f"{dl_key}.zip", "w", encoding="utf-8") as f:
-            f.write("test")
-        set_download_path(tmp_path / f"{dl_key}.zip", dl_key)
-
-    # Test when file exists and overwrite is true
-    with open(tmp_path / f"{dl_key}.zip", "w", encoding="utf-8") as f:
-        f.write("test")
-    assert set_download_path(tmp_path / f"{dl_key}.zip", dl_key, overwrite=True) == (
-        tmp_path / f"{dl_key}.zip"
-    )
-
-
 def mock_download_get(
-    _key: str, output_path: Path, *args, **kwargs  # pylint: disable=unused-argument
+    key: str, output_path: str, *args, **kwargs  # pylint: disable=unused-argument
 ) -> None:
     """Mock pygbif.occurences.download_get to write a throwaway file."""
-    with open(output_path, "wb") as f:
+
+    with open(Path(output_path) / f"{key}.zip", "wb") as f:
         f.write(b"test")
 
 
@@ -225,17 +192,27 @@ def test_download_request_to_disk(
     tmp_path, mocker, gbif_download_info, gbif_download_meta_success
 ):
     """Test download_request_to_disk"""
-    output_path = tmp_path / "tmp.zip"
     mocker.patch(f"{TESTED_MODULE}.occ.download_get", side_effect=mock_download_get)
     mocker.patch(
         f"{TESTED_MODULE}.occ.download_meta", return_value=gbif_download_meta_success
     )
-    download_request_to_disk(gbif_download_info[0], output_path)
+    download_request_to_disk(gbif_download_info[0], tmp_path)
+    correct_file = tmp_path / f"{gbif_download_info[0]}.zip"
 
-    assert output_path.exists()
-    assert output_path.stat().st_size > 0
-    assert output_path.with_suffix(".json").exists()
-    assert output_path.with_suffix(".json").stat().st_size > 0
+    assert correct_file.exists()
+    assert correct_file.stat().st_size > 0
+    assert correct_file.with_suffix(".json").exists()
+    assert correct_file.with_suffix(".json").stat().st_size > 0
+
+    ## Pytest doesn't seem to allow you to rename files in the tmp_path directory
+    ## This causes the below test to fail.
+    download_request_to_disk(gbif_download_info[0], tmp_path, "unique_name")
+    correct_file = tmp_path / "unique_name.zip"
+
+    assert correct_file.exists()
+    assert correct_file.stat().st_size > 0
+    assert correct_file.with_suffix(".json").exists()
+    assert correct_file.with_suffix(".json").stat().st_size > 0
 
 
 def test_check_download_job_and_download_file(tmp_path, mocker, gbif_download_info):

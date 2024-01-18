@@ -3,10 +3,13 @@ import json
 import logging
 import time
 from pathlib import Path
+from typing import Optional
 
 import click
 from dotenv import find_dotenv, load_dotenv
 from pygbif import occurrences as occ
+
+log = logging.getLogger(__name__)
 
 
 class GbifDownloadFailure(Exception):
@@ -31,54 +34,27 @@ def check_download_status(key: str) -> str:
     return status["status"]
 
 
-def download_request_to_disk(key: str, output_path: Path) -> None:
+def download_request_to_disk(
+    key: str, output_path: Path, name: Optional[str] = None
+) -> None:
     """Download a completed GBIF download job's zipfile and metadata."""
+
     occ.download_get(key, str(output_path))
 
+    if name is not None:
+        # Rename output file with name
+        named_file = output_path / f"{name}.zip"
+        Path(output_path, f"{key}.zip").rename(named_file)
+
     # Also save the metadata alongside the data
-    with open(output_path.with_suffix(".json"), "w", encoding="utf-8") as f:
+    with open(
+        output_path / f"{key if name is None else name}.json", "w", encoding="utf-8"
+    ) as f:
         json.dump(occ.download_meta(key), f)
 
 
-def set_download_path(path: Path, key: str, overwrite: bool = False) -> Path:
-    """
-    Returns the output path for a given key.
-
-    Args:
-        path (Path): The base path where the output file will be saved. If a directory,
-            the file will be named "path/{key}.csv". If the directory doesn't exist,
-            it will be created.
-        key (str): The key used to generate the output file name.
-        overwrite (bool, optional): Whether to overwrite the file if it already exists.
-            Defaults to False.
-
-    Returns:
-        Path: The output path for the given key.
-
-    Raises:
-        FileExistsError: If the file already exists and `overwrite` is set to False.
-    """
-    if path.is_dir():
-        if not path.exists():
-            raise FileNotFoundError(f"Directory {path.absolute()} does not exist.")
-        return path / f"{key}.zip"
-
-    if not path.parent.exists():
-        raise FileNotFoundError(f"Directory {path.parent.absolute()} does not exist.")
-
-    if path.suffix != ".zip":
-        raise ValueError("Output path must be a directory or a .zip file")
-
-    if path.exists() and not overwrite:
-        raise FileExistsError(
-            "File already exists. Set `overwrite=True` to overwrite it."
-        )
-
-    return path
-
-
 def check_download_job_and_download_file(
-    key: str, output_path: Path, max_hours: int | float = 6
+    key: str, output_path: Path, name: Optional[str] = None, max_hours: int | float = 6
 ) -> None:
     """
     Checks a pending GBIF download for a given amount of time, downloads the file once
@@ -98,10 +74,7 @@ def check_download_job_and_download_file(
     while True:
         status = check_download_status(key)
         if status == "SUCCEEDED":
-            download_request_to_disk(
-                key,
-                output_path,
-            )
+            download_request_to_disk(key=key, output_path=output_path, name=name)
             break
 
         if status == "FAILED":
@@ -125,32 +98,49 @@ def check_download_job_and_download_file(
     show_default=True,
 )
 @click.option(
+    "-n",
+    "--name",
+    "name",
+    type=click.STRING,
+    help="Human-readable name of the query. Will be used as the download name.",
+)
+@click.option(
+    "-k",
+    "--key",
+    "key",
+    type=click.STRING,
+    help="Key of download already created. Will simply re-download.",
+)
+@click.option(
     "-o",
     "--output",
     "output_path",
-    type=click.Path(path_type=Path),
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
     default=Path().cwd(),
     show_default=True,
 )
-@click.option(
-    "-w", "--overwrite", "overwrite", type=click.BOOL, default=False, show_default=True
-)
-def main(query_file: Path, output_path: Path, overwrite: bool):
+def main(query_file: Path, name: str, key: str, output_path: Path):
     """Check the status of a GBIF download job and download the CSV file once it's ready."""
-    log = logging.getLogger(__name__)
     load_dotenv(find_dotenv())  # Find local .env to expose GBIF credentials
 
     if query_file.suffix != ".json":
         raise ValueError("Query file must be a .json file.")
 
+    if not output_path.is_dir():
+        raise ValueError("Output path must be a directory.")
+
     with open(query_file, "r", encoding="utf-8") as f:
         gbif_query = json.load(f)
 
-    download_key = init_gbif_download(gbif_query)
-
+    if key is None:
+        log.info("No key provided. Initializing new query.")
+        download_key = init_gbif_download(gbif_query)
+    else:
+        log.info("Re-checking download using key: %s", key)
+        download_key = key
     log.info("Checking if download job is ready...")
     check_download_job_and_download_file(
-        download_key, set_download_path(output_path, download_key, overwrite)
+        key=download_key, output_path=output_path, name=name
     )
 
 

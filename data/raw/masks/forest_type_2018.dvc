@@ -1,0 +1,13 @@
+md5: 50ddd0041fa142fb23fc5c87df7d74a5
+frozen: true
+deps:
+- path: data/raw/masks/forest_type_2018
+  repo:
+    url: /mnt/FS_data/dl1070/eo-data
+    rev_lock: 44ba5fb1c7829564de69c9be90f31092536cbf0e
+outs:
+- md5: 47403a03681f8d079761cddcd0272495.dir
+  size: 219878517
+  nfiles: 2
+  hash: md5
+  path: forest_type_2018

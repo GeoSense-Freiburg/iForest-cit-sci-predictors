@@ -1,10 +1,10 @@
-md5: b572ad85c25718e7213599c79937e7f0
+md5: 59a7418a99bdd85a3daa6973fd1a2403
 frozen: true
 deps:
 - path: data/raw/gbif/all_tracheophyta_2024-01-18.json
   repo:
     url: /mnt/FS_data/dl1070/eo-data
-    rev_lock: 3eec2e1b52cee15b72262760bf1af7e34f0b6680
+    rev_lock: d47303b07493487c9348baa23f7c44b2f8a1c3fc
 outs:
 - md5: 4deeea33941fb8d4f0f6eb1863d953c3
   size: 827

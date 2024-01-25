@@ -11,6 +11,13 @@ packages = [{include = "src"}]
 [tool.poetry.dependencies]
 python = "~3.10"
 python-dotenv = "^1.0.0"
+ipykernel = "^6.29.0"
+pandas = "^2.2.0"
+pyarrow = "^14.0.2"
+pyogrio = "^0.7.2"
+geopandas = "^0.14.2"
+matplotlib = "^3.8.2"
+rioxarray = "^0.15.1"
 
 
 [tool.poetry.group.dev.dependencies]

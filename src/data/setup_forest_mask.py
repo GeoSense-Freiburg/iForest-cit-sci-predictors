@@ -1,14 +1,14 @@
 """
 Script to setup the forest mask to apply to GBIF data. Process involves polygonizing the
-Copernicus Forest Type 2018 .tif files and saving as an interim shapefile.
+Copernicus Forest Type 2018 .tif files and saving as an interim GPKG.
 """
 import logging
 import multiprocessing as mp
 from pathlib import Path
 from typing import Iterable
 
-import click
 import geopandas as gpd
+import hydra
 import pandas as pd
 import rasterio
 from rasterio.features import shapes
@@ -64,6 +64,21 @@ def polygonize_and_merge_forest_type_tiles(
     return gpd.GeoDataFrame(pd.concat(gdfs, ignore_index=True).reset_index(drop=True))
 
 
-@click
-def main() -> None:
-    ...
+@hydra.main(version_base=None, config_path="conf", config_name="config")
+def main(cfg) -> None:
+    """Main function."""
+    if cfg.fst_mask.verbose:
+        logging.basicConfig(level=logging.INFO)
+
+    log.info("Polygonizing forest type rasters...")
+    tiles = cfg.fst_mask.idir.glob("*.tif")
+    forest_type_gdf = polygonize_and_merge_forest_type_tiles(
+        tiles, cfg.fst_mask.n_procs
+    )
+    log.info("Saving forest type mask...")
+    forest_type_gdf.to_file(
+        cfg.fst_mask.odir / cfg.fst_mask.fn,
+        index=False,
+        engine="pyogrio",
+    )
+    log.info("Done.")

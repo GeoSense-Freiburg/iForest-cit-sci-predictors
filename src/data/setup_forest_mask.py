@@ -8,10 +8,11 @@ from pathlib import Path
 from typing import Iterable
 
 import geopandas as gpd
-import hydra
 import pandas as pd
 import rasterio
 from rasterio.features import shapes
+
+from src.conf.data_config import DataConfig, data_config
 
 log = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ def polygonize_raster(filename: str | Path) -> gpd.GeoDataFrame:
         # Polygonize the raster
         results = (
             {"properties": {"raster_val": v}, "geometry": s}
-            for i, (s, v) in enumerate(shapes(image, transform=src.transform))
+            for _, (s, v) in enumerate(shapes(image, transform=src.transform))
         )
 
     return gpd.GeoDataFrame.from_features(list(results), crs=crs)
@@ -64,21 +65,24 @@ def polygonize_and_merge_forest_type_tiles(
     return gpd.GeoDataFrame(pd.concat(gdfs, ignore_index=True).reset_index(drop=True))
 
 
-@hydra.main(version_base=None, config_path="conf", config_name="config")
-def main(cfg) -> None:
+def main(cfg: DataConfig) -> None:
     """Main function."""
     if cfg.fst_mask.verbose:
         logging.basicConfig(level=logging.INFO)
 
     log.info("Polygonizing forest type rasters...")
-    tiles = cfg.fst_mask.idir.glob("*.tif")
+    tiles = cfg.fst_mask.src.glob("*.tif")
     forest_type_gdf = polygonize_and_merge_forest_type_tiles(
         tiles, cfg.fst_mask.n_procs
     )
     log.info("Saving forest type mask...")
     forest_type_gdf.to_file(
-        cfg.fst_mask.odir / cfg.fst_mask.fn,
+        cfg.fst_mask.out,
         index=False,
         engine="pyogrio",
     )
     log.info("Done.")
+
+
+if __name__ == "__main__":
+    main(data_config)

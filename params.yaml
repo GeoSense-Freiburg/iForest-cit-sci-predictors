@@ -3,15 +3,14 @@ gbif:
 
 forest_mask:
   src: /mnt/FS_data/geosense_data_registry/raw/masks/forest_type_2018/FTY_2018_010m_eu_03035_v010/DATA/FTY_2018_010m_eu_03035_V1_0.tif
-  clipped: /home/dl1070/projects/iForest-cit-sci-predictors/data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped.tif
-  reproj: /home/dl1070/projects/iForest-cit-sci-predictors/data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
-  out: /home/dl1
+  clipped: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped.tif
+  reproj: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
+  final: ./data/interim/forest_mask/forest_mask.gpkg
   dst_epsg: 32632
-  n_procs: -1
   verbose: True
 
 s2_10m:
-  src: /home/dl1070/projects/iForest-cit-sci-predictors/data/raw/sentinel-2/fca_grid_empty_raster_R10m.tif
+  src: ./data/raw/sentinel-2/fca_grid_empty_raster_R10m.tif
 
 s2_20m:
-  src: /home/dl1070/projects/iForest-cit-sci-predictors/data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
+  src: ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif

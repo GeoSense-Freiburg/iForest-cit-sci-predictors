@@ -14,3 +14,10 @@ stages:
       - ${forest_mask.clipped}
     outs:
       - ${forest_mask.reproj}
+  polygonize_forest_mask:
+    cmd: python src/data/polygonize_forest_mask.py
+    deps:
+      - src/data/polygonize_forest_mask.py
+      - ${forest_mask.reproj}
+    outs:
+      - ${forest_mask.final}

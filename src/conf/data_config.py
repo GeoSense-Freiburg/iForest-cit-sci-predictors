@@ -1,4 +1,8 @@
-"""Data setup config script."""
+"""Data setup config script.
+
+!!!! IMPORTANT: This file is not currently being used, but may still be used in the future.
+Version control can manage this, but for now it's sticking around as a dead file.
+"""
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -42,7 +46,7 @@ class ForestMaskConfig:
     src: Path = Path(
         ext_raw_data_dir, "masks/forest_type_2018/FTY_2018_010m_de_03035_v010/DATA"
     )
-    out: Path = Path(os.getcwd(), "data/interim/forest_mask.gpkg")
+    out: Path = Path(os.getcwd(), "data/interim/forest_mask.parquet")
     n_procs: int = -1
     verbose: bool = True
 

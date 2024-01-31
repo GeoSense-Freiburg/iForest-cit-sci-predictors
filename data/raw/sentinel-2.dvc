@@ -1,0 +1,6 @@
+outs:
+- md5: b12c1b16b05221e261058fa18b770a16.dir
+  size: 50056526
+  nfiles: 3
+  hash: md5
+  path: sentinel-2

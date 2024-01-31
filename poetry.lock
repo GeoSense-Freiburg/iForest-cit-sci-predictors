@@ -538,6 +538,19 @@ unicode = ["unicodedata2 (>=15.1.0)"]
 woff = ["brotli (>=1.0.1)", "brotlicffi (>=0.8.0)", "zopfli (>=0.1.4)"]
 
 [[package]]
+name = "gdal"
+version = "3.6.4"
+description = "GDAL: Geospatial Data Abstraction Library"
+optional = false
+python-versions = ">=3.6.0"
+files = [
+    {file = "GDAL-3.6.4.tar.gz", hash = "sha256:c07d548cbd6544e8a51651fc1e487ca4b39e8fe6b5b3c886082d87f0e49e8313"},
+]
+
+[package.extras]
+numpy = ["numpy (>1.0.0)"]
+
+[[package]]
 name = "geopandas"
 version = "0.14.2"
 description = "Geographic pandas extensions"
@@ -2096,4 +2109,4 @@ viz = ["matplotlib", "nc-time-axis", "seaborn"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.10"
-content-hash = "c160647e7753c69f71697f701fe7d76a02cdf80fce7e7f744c725c8e32bdb5ac"
+content-hash = "c6184c3f7af4872a9944c94102927a3efd47597c9cd9ad79205fbb638c2e862d"

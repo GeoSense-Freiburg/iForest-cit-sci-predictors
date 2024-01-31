@@ -5,7 +5,7 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-PROJECT_NAME = eo-data
+PROJECT_NAME = if-cit-sci
 PYTHON_INTERPRETER = python3
 
 #################################################################################

@@ -17,3 +17,15 @@ stages:
       hash: md5
       md5: a264c8d81cdbd5b2d35f0126f82c54a6
       size: 5715285080
+  reproject_forest_mask:
+    cmd: python src/data/reproject_forest_mask.py
+    deps:
+    - path: data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped.tif
+      hash: md5
+      md5: a264c8d81cdbd5b2d35f0126f82c54a6
+      size: 5715285080
+    outs:
+    - path: data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
+      hash: md5
+      md5: df2ab7de52361b620168fd0b5a249d6b
+      size: 5874709586

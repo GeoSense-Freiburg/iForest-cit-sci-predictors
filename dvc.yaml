@@ -2,7 +2,15 @@ stages:
   clip_forest_mask:
     cmd: python src/data/clip_forest_mask.py
     deps:
+      - src/data/clip_forest_mask.py
       - ${forest_mask.src}
       - ${s2_20m.src}
     outs:
       - ${forest_mask.clipped}
+  reproject_forest_mask:
+    cmd: python src/data/reproject_forest_mask.py
+    deps:
+      - src/data/reproject_forest_mask.py
+      - ${forest_mask.clipped}
+    outs:
+      - ${forest_mask.reproj}

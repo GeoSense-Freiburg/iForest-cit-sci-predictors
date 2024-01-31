@@ -5,13 +5,10 @@ from pathlib import Path
 import rioxarray as riox
 
 from src.conf.parse_params import config
+from src.utils.setup_logger import setup_logger
 
+setup_logger()
 log = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S %Z",
-)
 
 
 def clip_raster_to_extent(src: Path, ref: Path, out: Path) -> Path:
@@ -42,6 +39,9 @@ def clip_raster_to_extent(src: Path, ref: Path, out: Path) -> Path:
 
 def main(cfg: dict):
     """Run the script."""
+    if cfg["forest_mask"]["verbose"]:
+        log.setLevel(logging.INFO)
+
     clip_raster_to_extent(
         src=Path(cfg["forest_mask"]["src"]),
         ref=Path(cfg["s2_20m"]["src"]),

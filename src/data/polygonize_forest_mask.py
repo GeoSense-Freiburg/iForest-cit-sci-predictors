@@ -4,54 +4,82 @@ Copernicus Forest Type 2018 .tif files and saving as an interim GPKG.
 """
 import logging
 import multiprocessing as mp
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from typing import Iterable
 
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 import rasterio
+from affine import Affine
 from rasterio.features import shapes
 
 from src.conf.parse_params import config
+from src.utils.df_utils import chain_log, write_gdf
 from src.utils.setup_logger import setup_logger
 
 setup_logger()
 log = logging.getLogger(__name__)
 
 
-def polygonize_raster(filename: str | Path) -> gpd.GeoDataFrame:
+def polygonize_raster(filename: str | Path, n_procs: int = -1) -> gpd.GeoDataFrame:
     """Polygonize a single-band raster image"""
-    with rasterio.open(filename) as src:
-        # Read the first band
-        image = src.read(1)
 
-        # Get the CRS
+    if n_procs == -1:
+        n_procs = mp.cpu_count()
+
+    with rasterio.open(filename) as src:
+        image = src.read(1)
         crs = src.crs
 
-        # Polygonize the raster
-        results = (
-            {"properties": {"raster_val": v}, "geometry": s}
-            for _, (s, v) in enumerate(shapes(image, transform=src.transform))
-        )
+        # Split the image into chunks along the first axis
+        chunks = np.array_split(image, n_procs)
+
+        # Create a process pool and apply the polygonize_chunk function to each chunk
+        with ProcessPoolExecutor(max_workers=n_procs) as executor:
+            results = executor.map(
+                _polygonize_chunk,
+                [
+                    (
+                        chunk,
+                        src.transform * Affine.translation(0, i * chunk.shape[0]),
+                    )
+                    for i, chunk in enumerate(chunks)
+                ],
+            )
+
+    # Flatten the list of results and create a GeoDataFrame
+    results = [item for sublist in results for item in sublist]
 
     return gpd.GeoDataFrame.from_features(list(results), crs=crs)
 
 
-def polygonize_forest_type_raster(filename: str | Path) -> gpd.GeoDataFrame:
+def _polygonize_chunk(args):
+    image_chunk, transform = args
+    return list(
+        {"properties": {"raster_val": v}, "geometry": s}
+        for _, (s, v) in enumerate(
+            shapes(image_chunk, mask=image_chunk, transform=transform)
+        )
+    )
+
+
+def polygonize_forest_type_raster(
+    filename: str | Path, n_procs: int = -1
+) -> gpd.GeoDataFrame:
     """
     Polygonize a single-band raster image from the Copernicus Forest Type 2018 and merge
     forest types into a single mask of multi-polygons.
     """
     gdf = (
-        polygonize_raster(filename)  # pyright: ignore[reportGeneralTypeIssues]
-        .pipe(lambda df_: df_[df_.raster_val.isin([1, 2])])
+        polygonize_raster(filename, n_procs)  # pyright: ignore[reportGeneralTypeIssues]
+        .pipe(chain_log, msg="Selecting only forest geometries")
+        .pipe(lambda df_: df_[df_.raster_val.isin([1])])
+        .pipe(chain_log, msg="Dropping NAs")
         .drop(columns="raster_val")
         .dropna(ignore_index=True)
-        .reset_index(drop=True)
-        .dissolve()
-        .reset_index(drop=True)
     )
-    log.info("Polygonized %s", filename)
     return gdf
 
 
@@ -74,15 +102,6 @@ def polygonize_and_merge_forest_type_tiles(
     )  # pyright: ignore[reportGeneralTypeIssues]
 
 
-def write_gdf(gdf: gpd.GeoDataFrame, out: Path, **kwargs) -> None:
-    """Write a GeoDataFrame to file."""
-    parquet_exts = [".parquet", ".parq"]
-    if out.suffix in parquet_exts:
-        gdf.to_parquet(out, **kwargs)
-    else:
-        gdf.to_file(out, **kwargs)
-
-
 def main(cfg: dict) -> None:
     """Main function."""
     if cfg["forest_mask"]["verbose"]:
@@ -91,7 +110,9 @@ def main(cfg: dict) -> None:
     Path(cfg["forest_mask"]["final"]).parent.mkdir(parents=True, exist_ok=True)
 
     log.info("Polygonizing raster...")
-    forest_type_gdf = polygonize_forest_type_raster(cfg["forest_mask"]["reproj"])
+    forest_type_gdf = polygonize_forest_type_raster(
+        cfg["forest_mask"]["reproj"], n_procs=cfg["forest_mask"]["n_procs"]
+    )
 
     log.info("Saving mask...")
     write_gdf(forest_type_gdf, Path(cfg["forest_mask"]["final"]), index=False)

@@ -8,6 +8,7 @@ forest_mask:
   final: ./data/interim/forest_mask/forest_mask.gpkg
   dst_epsg: 32632
   verbose: True
+  n_procs: 30
 
 s2_10m:
   src: ./data/raw/sentinel-2/fca_grid_empty_raster_R10m.tif

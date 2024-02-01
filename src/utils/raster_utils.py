@@ -3,6 +3,7 @@ import multiprocessing
 from pathlib import Path
 from typing import Any, Optional
 
+import rioxarray as riox
 import xarray as xr
 
 
@@ -31,3 +32,19 @@ def da_to_raster(
         da.rio.to_raster(out, **tiff_opts, **kwargs)
     else:
         da.rio.to_raster(out, dtype=dtype, **kwargs)
+
+
+def open_rasterio(src: Path, **kwargs) -> xr.DataArray | xr.Dataset:
+    """A handler for rioxarray.open_rasterio that avoids annoying type hinting errors
+    that arise from the rarely-used option to pass in a list of filenames and return a
+    list of datasets.
+
+    NOTE: This method should not be used if you want to use rioxarray.open_rasterio to
+    return a list of datasets. Use the original method instead.
+    """
+    data = riox.open_rasterio(src, **kwargs)
+
+    if isinstance(data, list):
+        raise ValueError("src must be a single raster file with one or many bands.")
+
+    return data

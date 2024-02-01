@@ -2,7 +2,6 @@
 import logging
 from pathlib import Path
 
-import numpy as np
 import rioxarray as riox
 import xarray as xr
 

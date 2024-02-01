@@ -3,29 +3,58 @@ stages:
   clip_forest_mask:
     cmd: python src/data/clip_forest_mask.py
     deps:
+    - path: ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
+      hash: md5
+      md5: d7fb8f49333c197f99b8291e63c91c59
+      size: 12774150
     - path: 
         /mnt/FS_data/geosense_data_registry/raw/masks/forest_type_2018/FTY_2018_010m_eu_03035_v010/DATA/FTY_2018_010m_eu_03035_V1_0.tif
       hash: md5
       md5: 67f7a74aad44a1e3ef0d1a8792528826
       size: 6111365885
-    - path: data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
+    - path: src/data/clip_forest_mask.py
       hash: md5
-      md5: d7fb8f49333c197f99b8291e63c91c59
-      size: 12774150
+      md5: 0777c4e43f935ae673add550d057e880
+      size: 1470
     outs:
-    - path: data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped.tif
+    - path: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped.tif
       hash: md5
       md5: a264c8d81cdbd5b2d35f0126f82c54a6
       size: 5715285080
   reproject_forest_mask:
     cmd: python src/data/reproject_forest_mask.py
     deps:
-    - path: data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped.tif
+    - path: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped.tif
       hash: md5
-      md5: a264c8d81cdbd5b2d35f0126f82c54a6
-      size: 5715285080
+      md5: 6f540ef4d80e3fdb440d74da9e1004ae
+      size: 121461208
+    - path: src/data/reproject_forest_mask.py
+      hash: md5
+      md5: 08e684daff01173574da8082dda93517
+      size: 1114
     outs:
-    - path: data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
+    - path: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
       hash: md5
-      md5: df2ab7de52361b620168fd0b5a249d6b
-      size: 5874709586
+      md5: dac468e1770609b81a9dfc69e73a4aee
+      size: 122273754
+  clip_and_binarize_forest_mask:
+    cmd: python src/data/clip_binarize_forest_mask.py
+    deps:
+    - path: ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
+      hash: md5
+      md5: d7fb8f49333c197f99b8291e63c91c59
+      size: 12774150
+    - path: 
+        /mnt/FS_data/geosense_data_registry/raw/masks/forest_type_2018/FTY_2018_010m_eu_03035_v010/DATA/FTY_2018_010m_eu_03035_V1_0.tif
+      hash: md5
+      md5: 67f7a74aad44a1e3ef0d1a8792528826
+      size: 6111365885
+    - path: src/data/clip_binarize_forest_mask.py
+      hash: md5
+      md5: 7b455df7b275bffddfff95dde7aa543d
+      size: 1893
+    outs:
+    - path: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped.tif
+      hash: md5
+      md5: 6f540ef4d80e3fdb440d74da9e1004ae
+      size: 121461208

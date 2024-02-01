@@ -1,8 +1,8 @@
 stages:
-  clip_forest_mask:
-    cmd: python src/data/clip_forest_mask.py
+  clip_and_binarize_forest_mask:
+    cmd: python src/data/clip_binarize_forest_mask.py
     deps:
-      - src/data/clip_forest_mask.py
+      - src/data/clip_binarize_forest_mask.py
       - ${forest_mask.src}
       - ${s2_20m.src}
     outs:

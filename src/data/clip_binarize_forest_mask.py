@@ -2,16 +2,19 @@
 import logging
 from pathlib import Path
 
+import numpy as np
 import rioxarray as riox
+import xarray as xr
 
 from src.conf.parse_params import config
+from src.utils.raster_utils import da_to_raster
 from src.utils.setup_logger import setup_logger
 
 setup_logger()
 log = logging.getLogger(__name__)
 
 
-def clip_raster_to_extent(src: Path, ref: Path, out: Path) -> Path:
+def clip_raster_to_extent(src: Path, ref: Path) -> xr.DataArray:
     """
     Clip a raster to the extent of another raster. Returns the path of the clipped
     raster, where the path is out_dir / [src stem]_clipped.tif.
@@ -24,17 +27,25 @@ def clip_raster_to_extent(src: Path, ref: Path, out: Path) -> Path:
 
     bounds = ref_raster.rio.transform_bounds(src_raster.rio.crs)
 
-    log.info("Clipping raster...")
     clipped = src_raster.rio.clip_box(*bounds)
 
     # Cleanup because xarray (or rioxarray) isn't the best at memory management.
     src_raster.close()
     ref_raster.close()
 
-    log.info("Writing raster...")
-    clipped.rio.to_raster(out, dtype="uint8", windowed=True)
+    return clipped
 
-    return out
+
+def binarize_forest_mask(da: xr.DataArray) -> xr.DataArray:
+    """
+    Overwrite the values of a raster according to a set of threshold conditions.
+    """
+    da = da.where((da > 0) & (da <= 2), 0)
+    da = da.where((da == 0) | (da > 2), 1)
+
+    da = da.rio.write_nodata(0)
+
+    return da
 
 
 def main(cfg: dict):
@@ -42,11 +53,17 @@ def main(cfg: dict):
     if cfg["forest_mask"]["verbose"]:
         log.setLevel(logging.INFO)
 
-    clip_raster_to_extent(
+    log.info("Clipping...")
+    clipped = clip_raster_to_extent(
         src=Path(cfg["forest_mask"]["src"]),
         ref=Path(cfg["s2_20m"]["src"]),
-        out=Path(cfg["forest_mask"]["clipped"]),
     )
+
+    log.info("Binarizing...")
+    binarized = binarize_forest_mask(clipped)
+
+    log.info("Writing...")
+    da_to_raster(binarized, Path(cfg["forest_mask"]["clipped"], dtype="byte"))
 
 
 if __name__ == "__main__":

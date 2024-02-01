@@ -7,10 +7,10 @@ import pandas as pd
 
 
 def chain_log(
-    df: pd.DataFrame | gpd.GeoDataFrame, msg: str
+    df: pd.DataFrame | gpd.GeoDataFrame, msg: str, name: str = __name__
 ) -> pd.DataFrame | gpd.GeoDataFrame:
     """Simple logging function to log messages chaining methods on a DataFrame."""
-    log = logging.getLogger(__name__)
+    log = logging.getLogger(name)
     log.info(msg)
     return df
 

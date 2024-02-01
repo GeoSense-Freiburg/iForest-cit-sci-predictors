@@ -1,6 +1,7 @@
 """Utility functions for working with DataFrames and GeoDataFrames."""
 import logging
 from pathlib import Path
+from typing import Iterable
 
 import geopandas as gpd
 import pandas as pd
@@ -22,3 +23,12 @@ def write_gdf(gdf: gpd.GeoDataFrame, out: Path, **kwargs) -> None:
         gdf.to_parquet(out, **kwargs)
     else:
         gdf.to_file(out, **kwargs)
+
+
+def clip_df_to_bbox(df: pd.DataFrame, bounds: Iterable[float]) -> pd.DataFrame:
+    """Clips a regular DataFrame with x and y columns in EPSG:4326 to the input bounds.
+    Input bounds should be an iterable in the form of (xmin, ymin, xmax, ymax)."""
+    xmin, ymin, xmax, ymax = bounds
+    return df[
+        (df["x"] >= xmin) & (df["y"] >= ymin) & (df["x"] <= xmax) & (df["y"] <= ymax)
+    ]

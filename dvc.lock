@@ -74,3 +74,25 @@ stages:
       hash: md5
       md5: ce65136ec33b4cb4283d540dcde134f2
       size: 2208034816
+  clip_gbif:
+    cmd: python src/data/clip_gbif.py
+    deps:
+    - path: ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
+      hash: md5
+      md5: d7fb8f49333c197f99b8291e63c91c59
+      size: 12774150
+    - path: 
+        /mnt/FS_data/geosense_data_registry/raw/gbif/all_tracheophyta_non-cult_2024-01-21/all_tracheophyta_non-cult_2024-01-21.parquet
+      hash: md5
+      md5: 08a894c291d8087e1223922601ad551e.dir
+      size: 28197369171
+      nfiles: 1482
+    - path: src/data/clip_gbif.py
+      hash: md5
+      md5: 6693773e78a61e5fc9bfd4347f371163
+      size: 2892
+    outs:
+    - path: ./data/interim/gbif/gbif_clipped.parquet
+      hash: md5
+      md5: f33d25fa69644786802376150b00297d
+      size: 179811145

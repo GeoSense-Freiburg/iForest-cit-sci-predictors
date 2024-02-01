@@ -21,3 +21,11 @@ stages:
       - ${forest_mask.reproj}
     outs:
       - ${forest_mask.final}
+  clip_gbif:
+    cmd: python src/data/clip_gbif.py
+    deps:
+      - src/data/clip_gbif.py
+      - ${gbif.src}
+      - ${s2_20m.src}
+    outs:
+      - ${gbif.clipped}

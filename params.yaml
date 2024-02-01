@@ -1,5 +1,8 @@
 gbif:
   src: /mnt/FS_data/geosense_data_registry/raw/gbif/all_tracheophyta_non-cult_2024-01-21/all_tracheophyta_non-cult_2024-01-21.parquet
+  clipped: ./data/interim/gbif/gbif_clipped.parquet
+  masked: ./data/interim/gbif/gbif_masked.parquet
+  verbose: True
 
 forest_mask:
   src: /mnt/FS_data/geosense_data_registry/raw/masks/forest_type_2018/FTY_2018_010m_eu_03035_v010/DATA/FTY_2018_010m_eu_03035_V1_0.tif

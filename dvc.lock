@@ -28,15 +28,19 @@ stages:
       hash: md5
       md5: 6f540ef4d80e3fdb440d74da9e1004ae
       size: 121461208
+    - path: ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
+      hash: md5
+      md5: d7fb8f49333c197f99b8291e63c91c59
+      size: 12774150
     - path: src/data/reproject_forest_mask.py
       hash: md5
-      md5: 08e684daff01173574da8082dda93517
-      size: 1114
+      md5: cdaee470990fd83a4edac0082f7a9a4a
+      size: 1422
     outs:
     - path: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
       hash: md5
-      md5: dac468e1770609b81a9dfc69e73a4aee
-      size: 122273754
+      md5: 0c56b54e57efbe07a7ff3f53d4633c72
+      size: 119244620
   clip_and_binarize_forest_mask:
     cmd: python src/data/clip_binarize_forest_mask.py
     deps:
@@ -96,3 +100,23 @@ stages:
       hash: md5
       md5: f33d25fa69644786802376150b00297d
       size: 179811145
+  mask_gbif:
+    cmd: python src/data/mask_gbif.py
+    deps:
+    - path: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
+      hash: md5
+      md5: 0c56b54e57efbe07a7ff3f53d4633c72
+      size: 119244620
+    - path: ./data/interim/gbif/gbif_clipped.parquet
+      hash: md5
+      md5: f33d25fa69644786802376150b00297d
+      size: 179811145
+    - path: src/data/mask_gbif.py
+      hash: md5
+      md5: cbeec7b26a24cd972dad8cd8e5e1c998
+      size: 1582
+    outs:
+    - path: ./data/interim/gbif/gbif_masked.parquet
+      hash: md5
+      md5: dcd616ec8e7daccb6ac30e90f2abd024
+      size: 57936942

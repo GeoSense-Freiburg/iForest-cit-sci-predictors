@@ -12,15 +12,9 @@ stages:
     deps:
       - src/data/reproject_forest_mask.py
       - ${forest_mask.clipped}
+      - ${s2_20m.src}
     outs:
       - ${forest_mask.reproj}
-  polygonize_forest_mask:
-    cmd: python src/data/polygonize_forest_mask.py
-    deps:
-      - src/data/polygonize_forest_mask.py
-      - ${forest_mask.reproj}
-    outs:
-      - ${forest_mask.final}
   clip_gbif:
     cmd: python src/data/clip_gbif.py
     deps:
@@ -29,3 +23,11 @@ stages:
       - ${s2_20m.src}
     outs:
       - ${gbif.clipped}
+  mask_gbif:
+    cmd: python src/data/mask_gbif.py
+    deps:
+      - src/data/mask_gbif.py
+      - ${forest_mask.reproj}
+      - ${gbif.clipped}
+    outs:
+      - ${gbif.masked}

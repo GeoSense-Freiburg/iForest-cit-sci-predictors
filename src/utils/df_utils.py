@@ -1,5 +1,6 @@
 """Utility functions for working with DataFrames and GeoDataFrames."""
 import logging
+import os
 from pathlib import Path
 from typing import Iterable
 
@@ -22,7 +23,18 @@ def write_gdf(gdf: gpd.GeoDataFrame, out: Path, **kwargs) -> None:
     if out.suffix in parquet_exts:
         gdf.to_parquet(out, **kwargs)
     else:
-        gdf.to_file(out, **kwargs)
+        gdf.to_file(out, engine="pyogrio", **kwargs)
+
+
+def read_gdf(src: str | os.PathLike, **kwargs) -> gpd.GeoDataFrame:
+    """Read a GeoDataFrame from file."""
+    parquet_exts = [".parquet", ".parq"]
+    if Path(src).suffix in parquet_exts:
+        return gpd.read_parquet(src, **kwargs)
+
+    return gpd.read_file(
+        src, engine="pyogrio", **kwargs
+    )  # pyright: ignore[reportGeneralTypeIssues]
 
 
 def clip_df_to_bbox(df: pd.DataFrame, bounds: Iterable[float]) -> pd.DataFrame:

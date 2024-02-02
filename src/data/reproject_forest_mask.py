@@ -1,4 +1,5 @@
 """Reproject the clipped forest mask to a new EPSG code."""
+
 import logging
 from pathlib import Path
 
@@ -6,7 +7,7 @@ import rioxarray as riox
 import xarray as xr
 
 from src.conf.parse_params import config
-from src.utils.raster_utils import da_to_raster
+from src.utils.raster_utils import da_to_raster, open_rasterio
 from src.utils.setup_logger import setup_logger
 
 setup_logger()
@@ -33,6 +34,12 @@ def main(cfg: dict) -> None:
         src=Path(cfg["forest_mask"]["clipped"]),
         dst_epsg=cfg["forest_mask"]["dst_epsg"],
     )
+
+    # Clip the raster to the Sentinel-2 extent (again) because the previous clip was
+    # done prior to reprojection and so has some errors.
+    log.info("Clipping raster...")
+    s2_20m = open_rasterio(cfg["s2_20m"]["src"])
+    reprojected = reprojected.rio.clip_box(*s2_20m.rio.bounds())
 
     log.info("Writing...")
     da_to_raster(reprojected, Path(cfg["forest_mask"]["reproj"]))

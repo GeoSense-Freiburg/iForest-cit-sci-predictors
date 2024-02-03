@@ -105,18 +105,39 @@ stages:
     deps:
     - path: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
       hash: md5
-      md5: 0c56b54e57efbe07a7ff3f53d4633c72
-      size: 119244620
+      md5: d65de3f24c842d2549e2836d609a176a
+      size: 118857655
     - path: ./data/interim/gbif/gbif_clipped.parquet
       hash: md5
       md5: f33d25fa69644786802376150b00297d
       size: 179811145
     - path: src/data/mask_gbif.py
       hash: md5
-      md5: cbeec7b26a24cd972dad8cd8e5e1c998
-      size: 1582
+      md5: 887d85fc5cd4133a9a7853188af7a0df
+      size: 1583
     outs:
     - path: ./data/interim/gbif/gbif_masked.parquet
       hash: md5
-      md5: dcd616ec8e7daccb6ac30e90f2abd024
-      size: 57936942
+      md5: 3573080903601f48b8374b58ebeda5dd
+      size: 57948014
+  setup_forest_mask:
+    cmd: python src/data/setup_forest_mask.py
+    deps:
+    - path: ./data/raw/sentinel-2/fca_grid_empty_raster_R10m.tif
+      hash: md5
+      md5: 525de44faa75dc7be138ee11c0d2463c
+      size: 37282312
+    - path: 
+        /mnt/FS_data/geosense_data_registry/raw/masks/forest_type_2018/FTY_2018_010m_eu_03035_v010/DATA/FTY_2018_010m_eu_03035_V1_0.tif
+      hash: md5
+      md5: 67f7a74aad44a1e3ef0d1a8792528826
+      size: 6111365885
+    - path: src/data/setup_forest_mask.py
+      hash: md5
+      md5: 8f7f90828f19d8adde9869cc3d0e5b2f
+      size: 2005
+    outs:
+    - path: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
+      hash: md5
+      md5: d65de3f24c842d2549e2836d609a176a
+      size: 118857655

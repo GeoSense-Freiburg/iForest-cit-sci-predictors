@@ -7,9 +7,7 @@ gbif:
 
 forest_mask:
   src: /mnt/FS_data/geosense_data_registry/raw/masks/forest_type_2018/FTY_2018_010m_eu_03035_v010/DATA/FTY_2018_010m_eu_03035_V1_0.tif
-  clipped: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped.tif
-  reproj: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
-  dst_epsg: 32632
+  matched: ./data/interim/forest_mask/FTY_2018_010m_eu_03035_V1_0_clipped_EPSG32632.tif
   verbose: True
 
 s2_10m:

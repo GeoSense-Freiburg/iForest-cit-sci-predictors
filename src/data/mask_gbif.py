@@ -49,7 +49,7 @@ def main(cfg: dict):
         log.setLevel(logging.INFO)
 
     masked_gdf = mask_points_with_raster(
-        points_src=cfg["gbif"]["clipped"], raster_src=cfg["forest_mask"]["reproj"]
+        points_src=cfg["gbif"]["clipped"], raster_src=cfg["forest_mask"]["matched"]
     )
 
     log.info("Writing masked points...")

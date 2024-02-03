@@ -1,5 +1,7 @@
 """A collection of utility functions for working with raster data."""
+
 import multiprocessing
+import os
 from pathlib import Path
 from typing import Any, Optional
 
@@ -9,7 +11,7 @@ import xarray as xr
 
 def da_to_raster(
     da: xr.DataArray,
-    out: Path,
+    out: os.PathLike,
     dtype: Optional[Any] = None,
     num_threads: int = -1,
     **kwargs
@@ -19,7 +21,7 @@ def da_to_raster(
     if num_threads == -1:
         num_threads = multiprocessing.cpu_count()
 
-    if out.suffix == ".tif":
+    if Path(out).suffix == ".tif":
         tiff_opts = {
             "driver": "GTiff",
             "dtype": dtype,
@@ -34,7 +36,7 @@ def da_to_raster(
         da.rio.to_raster(out, dtype=dtype, **kwargs)
 
 
-def open_rasterio(src: Path, **kwargs) -> xr.DataArray | xr.Dataset:
+def open_rasterio(src: os.PathLike, **kwargs) -> xr.DataArray | xr.Dataset:
     """A handler for rioxarray.open_rasterio that avoids annoying type hinting errors
     that arise from the rarely-used option to pass in a list of filenames and return a
     list of datasets.

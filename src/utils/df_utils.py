@@ -1,4 +1,5 @@
 """Utility functions for working with DataFrames and GeoDataFrames."""
+
 import logging
 import os
 from pathlib import Path
@@ -17,16 +18,16 @@ def chain_log(
     return df
 
 
-def write_gdf(gdf: gpd.GeoDataFrame, out: Path, **kwargs) -> None:
+def write_gdf(gdf: gpd.GeoDataFrame, out: os.PathLike, **kwargs) -> None:
     """Write a GeoDataFrame to file."""
     parquet_exts = [".parquet", ".parq"]
-    if out.suffix in parquet_exts:
+    if Path(out).suffix in parquet_exts:
         gdf.to_parquet(out, **kwargs)
     else:
         gdf.to_file(out, engine="pyogrio", **kwargs)
 
 
-def read_gdf(src: str | os.PathLike, **kwargs) -> gpd.GeoDataFrame:
+def read_gdf(src: os.PathLike, **kwargs) -> gpd.GeoDataFrame:
     """Read a GeoDataFrame from file."""
     parquet_exts = [".parquet", ".parq"]
     if Path(src).suffix in parquet_exts:

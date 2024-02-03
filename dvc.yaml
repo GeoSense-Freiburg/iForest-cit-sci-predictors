@@ -1,20 +1,12 @@
 stages:
-  clip_and_binarize_forest_mask:
-    cmd: python src/data/clip_binarize_forest_mask.py
+  setup_forest_mask:
+    cmd: python src/data/setup_forest_mask.py
     deps:
-      - src/data/clip_binarize_forest_mask.py
+      - src/data/setup_forest_mask.py
       - ${forest_mask.src}
-      - ${s2_20m.src}
+      - ${s2_10m.src}
     outs:
-      - ${forest_mask.clipped}
-  reproject_forest_mask:
-    cmd: python src/data/reproject_forest_mask.py
-    deps:
-      - src/data/reproject_forest_mask.py
-      - ${forest_mask.clipped}
-      - ${s2_20m.src}
-    outs:
-      - ${forest_mask.reproj}
+      - ${forest_mask.matched}
   clip_gbif:
     cmd: python src/data/clip_gbif.py
     deps:
@@ -27,7 +19,7 @@ stages:
     cmd: python src/data/mask_gbif.py
     deps:
       - src/data/mask_gbif.py
-      - ${forest_mask.reproj}
+      - ${forest_mask.matched}
       - ${gbif.clipped}
     outs:
       - ${gbif.masked}

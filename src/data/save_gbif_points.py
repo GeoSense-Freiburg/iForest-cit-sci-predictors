@@ -22,12 +22,6 @@ def main(cfg: dict):
         .assign(species_id=lambda df_: df_.species.astype("category").cat.codes)
     )
 
-    log.info("Extracting points...")
-    points = gbif.assign(
-        x=lambda df_: df_.geometry.apply(lambda p: p.x),
-        y=lambda df_: df_.geometry.apply(lambda p: p.y),
-    )[["species_id", "x", "y"]]
-
     log.info("Writing species IDs.")
     write_df(
         gbif[["species_id", "species"]].drop_duplicates(ignore_index=True),
@@ -35,7 +29,7 @@ def main(cfg: dict):
     )
 
     log.info("Writing points.")
-    write_df(points, cfg["gbif"]["points"])
+    write_df(gbif[["species_id", "geometry"]], cfg["gbif"]["points"])
 
     log.info("Done. ✅")
 

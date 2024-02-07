@@ -150,14 +150,14 @@ stages:
       size: 57948014
     - path: src/data/save_gbif_points.py
       hash: md5
-      md5: b54ec2b1794fd635c9cd12f67a7bf083
-      size: 1229
+      md5: db2b41396f877ff815cd3d099ad7806a
+      size: 1042
     outs:
     - path: ./data/interim/gbif/points.parquet
       hash: md5
-      md5: cac9baa65f12f8b9676247637266d2ac
-      size: 120809050
+      md5: 59f0b380bfc7417aac265e607869bd32
+      size: 152474251
     - path: ./data/interim/gbif/species_ids.parquet
       hash: md5
-      md5: 249360beefadbcfc38cb61514898ce37
-      size: 172135
+      md5: a8974e4b3ef96b906e6b44c48f6e1587
+      size: 171818

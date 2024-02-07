@@ -2,6 +2,7 @@
 Script to setup the forest mask to apply to GBIF data. Process involves polygonizing the
 Copernicus Forest Type 2018 .tif files and saving as an interim GPKG.
 """
+
 import logging
 import multiprocessing as mp
 from concurrent.futures import ProcessPoolExecutor
@@ -16,7 +17,7 @@ from affine import Affine
 from rasterio.features import shapes
 
 from src.conf.parse_params import config
-from src.utils.df_utils import chain_log, write_gdf
+from src.utils.df_utils import chain_log, write_df
 from src.utils.setup_logger import setup_logger
 
 setup_logger()
@@ -115,7 +116,7 @@ def main(cfg: dict) -> None:
     )
 
     log.info("Saving mask...")
-    write_gdf(forest_type_gdf, Path(cfg["forest_mask"]["final"]), index=False)
+    write_df(forest_type_gdf, Path(cfg["forest_mask"]["final"]), index=False)
 
     log.info("Done.")
 

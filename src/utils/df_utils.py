@@ -18,13 +18,14 @@ def chain_log(
     return df
 
 
-def write_gdf(gdf: gpd.GeoDataFrame, out: os.PathLike, **kwargs) -> None:
+def write_df(df: pd.DataFrame | gpd.GeoDataFrame, out: os.PathLike, **kwargs) -> None:
     """Write a GeoDataFrame to file."""
     parquet_exts = [".parquet", ".parq"]
     if Path(out).suffix in parquet_exts:
-        gdf.to_parquet(out, **kwargs)
+        df.to_parquet(out, **kwargs)
     else:
-        gdf.to_file(out, engine="pyogrio", **kwargs)
+        if isinstance(df, gpd.GeoDataFrame):
+            df.to_file(out, engine="pyogrio", **kwargs)
 
 
 def read_gdf(src: os.PathLike, **kwargs) -> gpd.GeoDataFrame:

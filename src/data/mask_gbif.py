@@ -9,7 +9,7 @@ import numpy as np
 import rasterio
 
 from src.conf.parse_params import config
-from src.utils.df_utils import read_gdf, write_gdf
+from src.utils.df_utils import read_gdf, write_df
 from src.utils.setup_logger import setup_logger
 
 setup_logger()
@@ -53,7 +53,7 @@ def main(cfg: dict):
     )
 
     log.info("Writing masked points...")
-    write_gdf(masked_gdf, out=Path(cfg["gbif"]["masked"]))
+    write_df(masked_gdf, out=Path(cfg["gbif"]["masked"]))
 
     log.info("Done.")
 

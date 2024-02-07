@@ -1,4 +1,5 @@
 """Clip GBIF data by extent of Sentinel-2 rasters."""
+
 import logging
 from functools import partial
 from pathlib import Path
@@ -10,7 +11,7 @@ import pandas as pd
 import xarray as xr
 
 from src.conf.parse_params import config
-from src.utils.df_utils import chain_log, clip_df_to_bbox, write_gdf
+from src.utils.df_utils import chain_log, clip_df_to_bbox, write_df
 from src.utils.raster_utils import open_rasterio
 from src.utils.setup_logger import setup_logger
 
@@ -93,7 +94,7 @@ def main(cfg: dict) -> None:
 
     # Make the output directory if it doesn't exist
     Path(cfg["gbif"]["clipped"]).parent.mkdir(parents=True, exist_ok=True)
-    write_gdf(gdf, Path(cfg["gbif"]["clipped"]))
+    write_df(gdf, Path(cfg["gbif"]["clipped"]))
 
 
 if __name__ == "__main__":

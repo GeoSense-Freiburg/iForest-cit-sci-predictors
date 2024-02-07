@@ -28,8 +28,13 @@ def main(cfg: dict):
         cfg["gbif"]["species_ids"],
     )
 
+    points = gbif.assign(
+        x=lambda df_: df_.geometry.apply(lambda p: p.x),
+        y=lambda df_: df_.geometry.apply(lambda p: p.y),
+    ).drop(columns=["geometry"])
+
     log.info("Writing points.")
-    write_df(gbif[["species_id", "geometry"]], cfg["gbif"]["points"])
+    write_df(points, cfg["gbif"]["points"])
 
     log.info("Done. ✅")
 

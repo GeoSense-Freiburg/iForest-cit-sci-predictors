@@ -1,4 +1,5 @@
 """Setup logging for the project."""
+
 import logging
 
 
@@ -16,3 +17,14 @@ def subprocess_logger() -> logging.Logger:
     subp_log = logging.getLogger("__main__")
     subp_log.setLevel(logging.INFO)
     return subp_log
+
+
+def setup_file_logger(logger_name, log_file, level=logging.INFO):
+    """Setup a file logger."""
+    l = logging.getLogger(logger_name)
+    formatter = logging.Formatter("%(asctime)s : %(message)s")
+    file_handler = logging.FileHandler(log_file, mode="a")
+    file_handler.setFormatter(formatter)
+
+    l.setLevel(level)
+    l.addHandler(file_handler)

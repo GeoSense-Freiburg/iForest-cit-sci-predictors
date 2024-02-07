@@ -4,7 +4,7 @@ import logging
 
 from src.conf.parse_params import config
 from src.utils.df_utils import read_df, write_df
-from src.utils.setup_logger import setup_logger
+from src.utils.log_utils import setup_logger
 
 setup_logger()
 log = logging.getLogger(__name__)

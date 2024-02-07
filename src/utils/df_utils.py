@@ -19,14 +19,19 @@ def chain_log(
 
 
 def write_df(df: pd.DataFrame | gpd.GeoDataFrame, out: os.PathLike, **kwargs) -> None:
-    """Write a GeoDataFrame to file."""
+    """Write a DataFrame or GeoDataFrame to file based on file extension."""
     parquet_exts = [".parquet", ".parq"]
-    if Path(out).suffix in parquet_exts:
+    ext = Path(out).suffix
+    if ext in parquet_exts:
         df.to_parquet(out, **kwargs)
+    elif ext.lower() == ".gpkg":
+        df.to_file(
+            out, engine="pyogrio", **kwargs
+        )  # pyright: ignore[reportGeneralTypeIssues]
     else:
         raise ValueError(
             f"Unsupported file format: {Path(out).suffix}. Consider using pandas"
-            "directly to read this file."
+            "directly to write this file."
         )
 
 

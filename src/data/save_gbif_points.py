@@ -3,7 +3,7 @@
 import logging
 
 from src.conf.parse_params import config
-from src.utils.df_utils import read_df, write_df
+from src.utils.df_utils import read_gdf, write_df
 from src.utils.log_utils import setup_logger
 
 setup_logger()
@@ -17,7 +17,7 @@ def main(cfg: dict):
 
     log.info("Reading data and assigning IDs...")
     gbif = (
-        read_df(cfg["gbif"]["masked"])
+        read_gdf(cfg["gbif"]["masked"])
         .sort_values("species", ignore_index=True)
         .assign(species_id=lambda df_: df_.species.astype("category").cat.codes)
     )

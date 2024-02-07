@@ -93,8 +93,8 @@ stages:
       nfiles: 1482
     - path: src/data/clip_gbif.py
       hash: md5
-      md5: 6693773e78a61e5fc9bfd4347f371163
-      size: 2892
+      md5: b376f4dfdc4f07634fb95f06d63dc1f2
+      size: 2891
     outs:
     - path: ./data/interim/gbif/gbif_clipped.parquet
       hash: md5
@@ -113,8 +113,8 @@ stages:
       size: 179811145
     - path: src/data/mask_gbif.py
       hash: md5
-      md5: 887d85fc5cd4133a9a7853188af7a0df
-      size: 1583
+      md5: 384e33a7d20b2544dbe766e7860923fc
+      size: 1581
     outs:
     - path: ./data/interim/gbif/gbif_masked.parquet
       hash: md5
@@ -141,3 +141,23 @@ stages:
       hash: md5
       md5: d65de3f24c842d2549e2836d609a176a
       size: 118857655
+  save_species_ids_points:
+    cmd: python src/features/save_gbif_points.py
+    deps:
+    - path: ./data/interim/gbif/gbif_masked.parquet
+      hash: md5
+      md5: 3573080903601f48b8374b58ebeda5dd
+      size: 57948014
+    - path: src/features/save_gbif_points.py
+      hash: md5
+      md5: 236ce4420a317e9cf4d6ac00752a7523
+      size: 1231
+    outs:
+    - path: ./data/interim/gbif/points.parquet
+      hash: md5
+      md5: cac9baa65f12f8b9676247637266d2ac
+      size: 120809050
+    - path: ./data/interim/gbif/species_ids.parquet
+      hash: md5
+      md5: 249360beefadbcfc38cb61514898ce37
+      size: 172135

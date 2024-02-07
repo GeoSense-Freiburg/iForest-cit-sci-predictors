@@ -1,2 +1,4 @@
 /gbif_clipped.parquet
 /gbif_masked.parquet
+/species_ids.parquet
+/points.parquet

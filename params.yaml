@@ -2,6 +2,8 @@ gbif:
   src: /mnt/FS_data/geosense_data_registry/raw/gbif/all_tracheophyta_non-cult_2024-01-21/all_tracheophyta_non-cult_2024-01-21.parquet
   clipped: ./data/interim/gbif/gbif_clipped.parquet
   masked: ./data/interim/gbif/gbif_masked.parquet
+  species_ids: ./data/interim/gbif/species_ids.parquet
+  points: ./data/interim/gbif/points.parquet
   verbose: True
   n_procs: 30
 
@@ -15,3 +17,18 @@ s2_10m:
 
 s2_20m:
   src: ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
+
+stats:
+  verbose: True
+  species_ids: ./data/interim/species_stats/species_ids.json
+  radii:
+    - 50
+    - 100
+    - 500
+    - 1000
+    - 2000
+  target_rasters:
+    - ./data/raw/sentinel-2/fca_grid_empty_raster_R10m.tif
+    - ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
+  out_dir_npz: ./data/interim/species_stats/npz
+  # out_hdf5: ./data/interim/species_stats/species_stats.hdf5

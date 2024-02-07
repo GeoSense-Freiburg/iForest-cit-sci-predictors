@@ -2,12 +2,11 @@
 
 import logging
 
-import numpy as np
 import xarray as xr
 
 from src.conf.parse_params import config
+from src.utils.log_utils import setup_logger
 from src.utils.raster_utils import da_to_raster, open_rasterio
-from src.utils.setup_logger import setup_logger
 
 setup_logger()
 log = logging.getLogger(__name__)

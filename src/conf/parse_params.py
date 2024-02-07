@@ -1,4 +1,5 @@
 """Parses a DVC params.yaml file to return a config object that can be used in other scripts."""
+
 import os
 
 import yaml

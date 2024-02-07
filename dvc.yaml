@@ -24,9 +24,9 @@ stages:
     outs:
       - ${gbif.masked}
   save_species_ids_points:
-    cmd: python src/features/save_gbif_points.py
+    cmd: python src/data/save_gbif_points.py
     deps:
-      - src/features/save_gbif_points.py
+      - src/data/save_gbif_points.py
       - ${gbif.masked}
     outs:
       - ${gbif.species_ids}

@@ -142,16 +142,16 @@ stages:
       md5: d65de3f24c842d2549e2836d609a176a
       size: 118857655
   save_species_ids_points:
-    cmd: python src/features/save_gbif_points.py
+    cmd: python src/data/save_gbif_points.py
     deps:
     - path: ./data/interim/gbif/gbif_masked.parquet
       hash: md5
       md5: 3573080903601f48b8374b58ebeda5dd
       size: 57948014
-    - path: src/features/save_gbif_points.py
+    - path: src/data/save_gbif_points.py
       hash: md5
-      md5: 236ce4420a317e9cf4d6ac00752a7523
-      size: 1231
+      md5: b54ec2b1794fd635c9cd12f67a7bf083
+      size: 1229
     outs:
     - path: ./data/interim/gbif/points.parquet
       hash: md5

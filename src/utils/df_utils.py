@@ -24,12 +24,14 @@ def write_df(df: pd.DataFrame | gpd.GeoDataFrame, out: os.PathLike, **kwargs) ->
     if Path(out).suffix in parquet_exts:
         df.to_parquet(out, **kwargs)
     else:
-        if isinstance(df, gpd.GeoDataFrame):
-            df.to_file(out, engine="pyogrio", **kwargs)
+        raise ValueError(
+            f"Unsupported file format: {Path(out).suffix}. Consider using pandas"
+            "directly to read this file."
+        )
 
 
 def read_gdf(src: os.PathLike, **kwargs) -> gpd.GeoDataFrame:
-    """Read a GeoDataFrame from file."""
+    """Read a GeoDataFrame from file based on file extension."""
     parquet_exts = [".parquet", ".parq"]
     if Path(src).suffix in parquet_exts:
         return gpd.read_parquet(src, **kwargs)
@@ -37,6 +39,18 @@ def read_gdf(src: os.PathLike, **kwargs) -> gpd.GeoDataFrame:
     return gpd.read_file(
         src, engine="pyogrio", **kwargs
     )  # pyright: ignore[reportGeneralTypeIssues]
+
+
+def read_df(src: os.PathLike, **kwargs) -> pd.DataFrame:
+    """Read a DataFrame from file based on file extension."""
+    parquet_exts = [".parquet", ".parq"]
+    if Path(src).suffix in parquet_exts:
+        return pd.read_parquet(src, **kwargs)
+
+    raise ValueError(
+        f"Unsupported file format: {Path(src).suffix}. Consider using pandas directly"
+        "to read this file."
+    )
 
 
 def clip_df_to_bbox(df: pd.DataFrame, bounds: Iterable[float]) -> pd.DataFrame:

@@ -22,18 +22,19 @@ def main(cfg: dict):
         .assign(species_id=lambda df_: df_.species.astype("category").cat.codes)
     )
 
-    log.info("Writing species IDs.")
+    log.info("Writing species IDs...")
     write_df(
         gbif[["species_id", "species"]].drop_duplicates(ignore_index=True),
         cfg["gbif"]["species_ids"],
     )
 
+    log.info("Extracting point coordinates...")
     points = gbif.assign(
         x=lambda df_: df_.geometry.apply(lambda p: p.x),
         y=lambda df_: df_.geometry.apply(lambda p: p.y),
-    ).drop(columns=["geometry"])
+    ).drop(columns=["species", "geometry"])
 
-    log.info("Writing points.")
+    log.info("Writing points...")
     write_df(points, cfg["gbif"]["points"])
 
     log.info("Done. ✅")

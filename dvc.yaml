@@ -7,6 +7,7 @@ stages:
       - ${s2_10m.src}
     outs:
       - ${forest_mask.matched}
+
   clip_gbif:
     cmd: python src/data/clip_gbif.py
     deps:
@@ -15,6 +16,7 @@ stages:
       - ${s2_20m.src}
     outs:
       - ${gbif.clipped}
+
   mask_gbif:
     cmd: python src/data/mask_gbif.py
     deps:
@@ -23,6 +25,7 @@ stages:
       - ${gbif.clipped}
     outs:
       - ${gbif.masked}
+
   save_species_ids_points:
     cmd: python src/data/save_gbif_points.py
     deps:
@@ -31,3 +34,92 @@ stages:
     outs:
       - ${gbif.species_ids}
       - ${gbif.points}
+
+  compute_stats_20m_50r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 20 50 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_20m.src}
+    outs:
+      - ${stats.out_20m_50r}
+
+  compute_stats_20m_100r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 20 100 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_20m.src}
+    outs:
+      - ${stats.out_20m_100r}
+  compute_stats_20m_500r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 20 500 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_20m.src}
+    outs:
+      - ${stats.out_20m_500r}
+  compute_stats_20m_1000r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 20 1000 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_20m.src}
+    outs:
+      - ${stats.out_20m_1000r}
+
+  compute_stats_20m_2000r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 20 2000 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_10m.src}
+      - ${s2_20m.src}
+    outs:
+      - ${stats.out_20m_2000r}
+
+  compute_stats_10m_50r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 10 50 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_10m.src}
+    outs:
+      - ${stats.out_10m_50r}
+
+  compute_stats_10m_100r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 10 100 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_10m.src}
+    outs:
+      - ${stats.out_10m_100r}
+
+  compute_stats_10m_500r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 10 500 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_10m.src}
+    outs:
+      - ${stats.out_10m_500r}
+
+  compute_stats_10m_1000r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 10 1000 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_10m.src}
+    outs:
+      - ${stats.out_10m_1000r}
+
+  compute_stats_10m_2000r:
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 10 2000 -v -n 40
+    deps:
+      - src/features/compute_grid_stats_reverse_tree.py
+      - ${gbif.points}
+      - ${s2_10m.src}
+    outs:
+      - ${stats.out_10m_2000r}

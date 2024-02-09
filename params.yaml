@@ -19,16 +19,22 @@ s2_20m:
   src: ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
 
 stats:
-  verbose: True
-  species_ids: ./data/interim/species_stats/species_ids.json
+  n_species: 100
+  chunk_size: 1000
   radii:
     - 50
     - 100
     - 500
     - 1000
     - 2000
-  target_rasters:
-    - ./data/raw/sentinel-2/fca_grid_empty_raster_R10m.tif
-    - ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
-  out_dir_npz: ./data/interim/species_stats/npz
-  # out_hdf5: ./data/interim/species_stats/species_stats.hdf5
+  out_dir: ./data/processed
+  out_20m_50r: ./data/processed/20m_50r_stats.parquet
+  out_20m_100r: ./data/processed/20m_100r_stats.parquet
+  out_20m_500r: ./data/processed/20m_500r_stats.parquet
+  out_20m_1000r: ./data/processed/20m_1000r_stats.parquet
+  out_20m_2000r: ./data/processed/20m_2000r_stats.parquet
+  out_10m_50r: ./data/processed/10m_50r_stats.parquet
+  out_10m_100r: ./data/processed/10m_100r_stats.parquet
+  out_10m_500r: ./data/processed/10m_500r_stats.parquet
+  out_10m_1000r: ./data/processed/10m_1000r_stats.parquet
+  out_10m_2000r: ./data/processed/10m_2000r_stats.parquet

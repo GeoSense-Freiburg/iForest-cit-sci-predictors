@@ -18,9 +18,11 @@ s2_10m:
 s2_20m:
   src: ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
 
+stats_gpu:
+
 stats:
   n_species: 100
-  chunk_size: 1000
+  n_chunks: 1000
   radii:
     - 50
     - 100

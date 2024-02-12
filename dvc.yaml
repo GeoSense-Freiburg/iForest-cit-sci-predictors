@@ -61,7 +61,7 @@ stages:
     outs:
       - ${stats.out_20m_500r}
   compute_stats_20m_1000r:
-    cmd: python src/features/compute_grid_stats_reverse_tree.py 20 1000 -v -n 40
+    cmd: python src/features/compute_grid_stats_reverse_tree.py 20 1000 -kv -n 40
     deps:
       - src/features/compute_grid_stats_reverse_tree.py
       - ${gbif.points}

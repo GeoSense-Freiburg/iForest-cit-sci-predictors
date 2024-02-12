@@ -27,7 +27,8 @@ tqdm = "^4.66.1"
 ipywidgets = "^8.1.1"
 scipy = "^1.12.0"
 seaborn = "^0.13.2"
-dask = "^2024.1.1"
+dask = {extras = ["distributed"], version = "^2024.2.0"}
+bokeh = "^3.3.4"
 
 
 [tool.poetry.group.dev.dependencies]

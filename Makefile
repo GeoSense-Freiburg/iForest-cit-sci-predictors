@@ -28,8 +28,7 @@ requirements: test_environment
 # Pipeline
 ###
 
-## Make Dataset
-# TBD
+# Using DVC instead
 
 ## Delete all compiled Python files
 clean:

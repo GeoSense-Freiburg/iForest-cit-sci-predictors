@@ -57,6 +57,49 @@ Project Organization
 
 --------
 
+## Project description
+
+The goal of this project is to support a prestudy by developing citizen-science-based species observation statistcs as features for use in training Sentinel-2-based species prediction models.
+
+The pipeline takes [all vascular plant observations](https://doi.org/10.15468/dl.ybmj5x) as obtained from the GBIF database, subsets them by the extent of Sentinel-2 grids which in turn cover the extent of Germany, and further subsets the observations by masking out all observations in non-forested areas. Forested areas are determined from the [Copernicus Forest Type 2018 dataset](https://land.copernicus.eu/en/products/high-resolution-layer-forest-type/forest-type-2018#general_info). Next, species counts, as well as species counts weighted by distance, are produced for each grid cell in the reference Sentinel-2 raster at a series of different query radii.
+
+The features are produced as 2-layer raster images that match the CRS, extent, and transform of the reference Sentinel-2 grid for each species:
+- Each species' statistics are saved as a netcdf file which contains a 2-layer raster with the layers `counts` and `wt_counts`.
+- To conserve space, the `wt_counts` layer is "packed" into `int16` format. For end users of the data, be sure to apply the scale and offset to get the actual weighted counts.
+- Each species is indicated by a species ID, mapped in `species_ids.parquet`.
+
+
+```shell
+                                +-------------------------+                  
+                                | data/raw/sentinel-2.dvc |                  
+                               *+-------------------------+                  
+                         ******           *               ******             
+                   ******                 *                     *****        
+                ***                      *                           *****   
++-------------------+             +-----------+                           ***
+| setup_forest_mask |             | clip_gbif |                             *
++-------------------+             +-----------+                             *
+                 ***            ***                                         *
+                    **        **                                            *
+                      **    **                                              *
+                   +-----------+                                            *
+                   | mask_gbif |                                            *
+                   +-----------+                                            *
+                          *                                                 *
+                          *                                                 *
+                          *                                                 *
+            +-------------------------+                                   ***
+            | save_species_ids_points |                              *****   
+            +-------------------------+                         *****        
+                                  ****                    ******             
+                                      ***            *****                   
+                                         **       ***                        
+                                +-----------------------+                    
+                                | compute_all_radii_20m |                    
+                                +-----------------------+    
+```
+An example DAG for the pipeline described above, in which final species statistics are computed at 20 m resolution for all query radii. This can be easily recreated with `dvc dag`.
+
 ## Installation
 
 ### 1. Clone this project repository

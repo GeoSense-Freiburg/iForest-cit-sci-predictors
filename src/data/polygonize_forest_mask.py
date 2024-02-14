@@ -77,7 +77,9 @@ def polygonize_forest_type_raster(
         polygonize_raster(filename, n_procs)  # pyright: ignore[reportGeneralTypeIssues]
         .pipe(chain_log, msg="Selecting only forest geometries")
         .pipe(lambda df_: df_[df_.raster_val.isin([1])])
-        .pipe(chain_log, msg="Dropping NAs")
+        .pipe(  # pyright: ignore[reportAttributeAccessIssue]
+            chain_log, msg="Dropping NAs"  # pyright: ignore[reportArgumentType]
+        )
         .drop(columns="raster_val")
         .dropna(ignore_index=True)
     )
@@ -100,7 +102,7 @@ def polygonize_and_merge_forest_type_tiles(
         gpd.GeoDataFrame(pd.concat(gdfs, ignore_index=True).reset_index(drop=True))
         .dissolve()
         .reset_index(drop=True)
-    )  # pyright: ignore[reportGeneralTypeIssues]
+    )  # pyright: ignore[reportGeneralTypeIssues, reportReturnType]
 
 
 def main(cfg: dict) -> None:

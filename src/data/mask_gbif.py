@@ -36,9 +36,9 @@ def mask_points_with_raster(
         points["raster_value"] = raster_values
 
     log.info("Cleaning up...")
-    return (
+    return (  # pyright: ignore
         points.pipe(lambda df_: df_[df_.raster_value == 1])
-        .drop(columns=["raster_value"])
+        .drop(columns=["raster_value"])  # pyright: ignore
         .reset_index(drop=True)
     )
 

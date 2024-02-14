@@ -61,8 +61,8 @@ def clip_gbif_to_s2(
     """Clip GBIF data by extent of Sentinel-2 rasters and mask with a shapefile
     containing polygons pertaining to forested areas."""
 
-    return (
-        df.dropna()  # pyright: ignore[reportGeneralTypeIssues]
+    return (  # pyright: ignore
+        df.dropna()
         .pipe(gbif_set_dtypes)
         .pipe(
             gbif_clip_to_extent,

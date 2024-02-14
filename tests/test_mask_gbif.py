@@ -9,7 +9,7 @@ from pyproj import CRS
 from shapely.geometry import Point
 
 from src.data.mask_gbif import mask_points_with_raster
-from src.utils.setup_logger import setup_logger
+from src.utils.log_utils import setup_logger
 
 setup_logger()
 log = logging.getLogger(__name__)

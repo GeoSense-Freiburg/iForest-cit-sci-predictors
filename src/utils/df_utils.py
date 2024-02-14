@@ -27,7 +27,7 @@ def write_df(df: pd.DataFrame | gpd.GeoDataFrame, out: os.PathLike, **kwargs) ->
     elif ext.lower() == ".gpkg":
         df.to_file(
             out, engine="pyogrio", **kwargs
-        )  # pyright: ignore[reportGeneralTypeIssues]
+        )  # pyright: ignore[reportGeneralTypeIssues, reportCallIssue]
     else:
         raise ValueError(
             f"Unsupported file format: {Path(out).suffix}. Consider using pandas"
@@ -43,7 +43,7 @@ def read_gdf(src: os.PathLike, **kwargs) -> gpd.GeoDataFrame:
 
     return gpd.read_file(
         src, engine="pyogrio", **kwargs
-    )  # pyright: ignore[reportGeneralTypeIssues]
+    )  # pyright: ignore[reportGeneralTypeIssues, reportReturnType]
 
 
 def read_df(src: os.PathLike, **kwargs) -> pd.DataFrame:

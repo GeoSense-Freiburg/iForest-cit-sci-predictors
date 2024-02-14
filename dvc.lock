@@ -93,8 +93,8 @@ stages:
       nfiles: 1482
     - path: src/data/clip_gbif.py
       hash: md5
-      md5: 6451c390a3c695c06edaf545b8b312cb
-      size: 2888
+      md5: f29811fc25ff68755687c43eabbe1aac
+      size: 2863
     outs:
     - path: ./data/interim/gbif/gbif_clipped.parquet
       hash: md5
@@ -113,8 +113,8 @@ stages:
       size: 179811145
     - path: src/data/mask_gbif.py
       hash: md5
-      md5: 91b0f3344154426e668b8a3259b39992
-      size: 1578
+      md5: 8af513cc8e71da687e2dde1f5dcab723
+      size: 1616
     outs:
     - path: ./data/interim/gbif/gbif_masked.parquet
       hash: md5
@@ -161,3 +161,24 @@ stages:
       hash: md5
       md5: a8974e4b3ef96b906e6b44c48f6e1587
       size: 171818
+  compute_all_radii_20m:
+    cmd: python src/features/compute_grid_stats.py -r 20 -v -g 0 -n 1
+    deps:
+    - path: ./data/interim/gbif/points.parquet
+      hash: md5
+      md5: 2a0aaef66885dee61ab69801481b8b8d
+      size: 120808721
+    - path: ./data/raw/sentinel-2/fca_grid_empty_raster_R20m.tif
+      hash: md5
+      md5: d7fb8f49333c197f99b8291e63c91c59
+      size: 12774150
+    - path: src/features/compute_grid_stats.py
+      hash: md5
+      md5: cdd1abdf1b0ed315d03d657f6fb5268d
+      size: 8156
+    outs:
+    - path: ./data/processed/20m
+      hash: md5
+      md5: 2ec63ac4d73eb2ba3faf168cf73090fc.dir
+      size: 8746084883
+      nfiles: 100

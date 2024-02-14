@@ -1,0 +1,11 @@
+name: if-cit-sci
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.10.*
+  - mamba
+  - pip
+  - cupy=13.0.*
+platforms:
+  - linux-64

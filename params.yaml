@@ -21,20 +21,11 @@ s2_20m:
 stats:
   n_species: 100
   chunk_size: 1000
+  writer: netcdf
   radii:
     - 50
     - 100
     - 500
-    - 1000
+    # - 1000
     - 2000
   out_dir: ./data/processed
-  out_20m_50r: ./data/processed/20m_50r_stats.parquet
-  out_20m_100r: ./data/processed/20m_100r_stats.parquet
-  out_20m_500r: ./data/processed/20m_500r_stats.parquet
-  out_20m_1000r: ./data/processed/20m_1000r_stats.parquet
-  out_20m_2000r: ./data/processed/20m_2000r_stats.parquet
-  out_10m_50r: ./data/processed/10m_50r_stats.parquet
-  out_10m_100r: ./data/processed/10m_100r_stats.parquet
-  out_10m_500r: ./data/processed/10m_500r_stats.parquet
-  out_10m_1000r: ./data/processed/10m_1000r_stats.parquet
-  out_10m_2000r: ./data/processed/10m_2000r_stats.parquet

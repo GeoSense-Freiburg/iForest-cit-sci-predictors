@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 from typing import Any, Optional
 
+import numpy as np
 import rioxarray as riox
 import xarray as xr
 
@@ -50,3 +51,53 @@ def open_rasterio(src: os.PathLike, **kwargs) -> xr.DataArray | xr.Dataset:
         raise ValueError("src must be a single raster file with one or many bands.")
 
     return data
+
+
+def pack_dataset(
+    ds: xr.Dataset, nodata: bool = True, signed: bool = False
+) -> xr.Dataset:
+    """
+    Pack an xarray Dataset into int16 format.
+
+    Uses https://docs.unidata.ucar.edu/nug/current/best_practices.html as reference.
+    """
+    with xr.set_options(keep_attrs=True):
+        for dv in ds.data_vars:
+            if np.issubdtype(ds[dv].dtype, np.floating):
+                min_val = ds[dv].min().item()
+                max_val = ds[dv].max().item()
+
+                bit_exp = 16
+                bit_count = 2**bit_exp
+
+                if nodata:
+                    nodata_val = -(2**15)
+                    scale_factor = np.float32((max_val - min_val) / (bit_count - 2))
+
+                    if signed:
+                        offset = (max_val + min_val) / 2
+                    else:
+                        offset = min_val - scale_factor
+
+                    ds[dv] = ds[dv].fillna(nodata_val)
+                    ds[dv] = ds[dv].rio.write_nodata(nodata_val, encoded=True)
+                    ds[dv].attrs["_FillValue"] = nodata_val
+
+                else:
+                    scale_factor = (max_val - min_val) / (bit_count - 1)
+
+                    if signed:
+                        offset = min_val + 2 ** (bit_exp - 1) * scale_factor
+                    else:
+                        offset = min_val
+
+                ds[dv] = (ds[dv] - offset) / scale_factor
+                ds[dv] = ds[dv].astype(np.int16)
+
+                ds[dv].attrs["scale_factor"] = scale_factor
+                ds[dv].attrs["add_offset"] = offset
+            else:
+                ds[dv].attrs["scale_factor"] = 1.0
+                ds[dv].attrs["add_offset"] = 0
+
+    return ds

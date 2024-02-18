@@ -36,7 +36,7 @@ stages:
       - ${gbif.points}
 
   compute_all_radii_20m:
-    cmd: python src/features/compute_grid_stats.py -r 20 -v -g 0 -n 1
+    cmd: python src/features/compute_grid_stats.py 20 -v -n 2
     deps:
       - src/features/compute_grid_stats.py
       - ${gbif.points}

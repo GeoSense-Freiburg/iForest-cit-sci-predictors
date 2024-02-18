@@ -252,10 +252,9 @@ def main(cfg: dict) -> None:
     out_dir = Path(cfg["stats"]["out_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    query_set = f"{args.resolution}m_{args.radius}r"
-    log.info("Preparing %s...", query_set)
-
     for radius in cfg["stats"]["radii"]:
+        query_set = f"{args.resolution}m_{radius}r"
+        log.info("Preparing %s...", query_set)
         mp_args = [
             (
                 SpeciesSet(str(sp_id), sp_df, int(args.resolution), radius),

@@ -97,7 +97,14 @@ def shrink_arr(arr: np.ndarray) -> np.ndarray:
 
 @dataclass
 class SpeciesSet:
-    """Dataclass for species data."""
+    """Dataclass for species data.
+
+    Attributes:
+        id (str): The ID of the species set.
+        df (pd.DataFrame): The DataFrame containing the species data.
+        resolution (int): The resolution of the grid.
+        radius (int): The radius used for computing grid statistics.
+    """
 
     id: str
     df: pd.DataFrame

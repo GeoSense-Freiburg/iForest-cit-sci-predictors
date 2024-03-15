@@ -12,7 +12,7 @@ import xarray as xr
 
 def da_to_raster(
     da: xr.DataArray,
-    out: os.PathLike,
+    out: str | os.PathLike,
     dtype: Optional[Any] = None,
     num_threads: int = -1,
     **kwargs

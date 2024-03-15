@@ -14,6 +14,7 @@ def da_to_raster(
     da: xr.DataArray,
     out: str | os.PathLike,
     dtype: Optional[Any] = None,
+    compress: str = "ZSTD",
     num_threads: int = -1,
     **kwargs
 ) -> None:
@@ -29,7 +30,7 @@ def da_to_raster(
             "tiled": True,
             "blockxsize": 256,
             "blockysize": 256,
-            "compress": "ZSTD",
+            "compress": compress,
             "num_threads": num_threads,
         }
         da.rio.to_raster(out, **tiff_opts, **kwargs)

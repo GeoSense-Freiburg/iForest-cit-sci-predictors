@@ -26,6 +26,6 @@ stats:
     - 50
     - 100
     - 500
-    # - 1000
+    - 1000
     - 2000
-  out_dir: ./data/processed
+  out_dir: data/processed

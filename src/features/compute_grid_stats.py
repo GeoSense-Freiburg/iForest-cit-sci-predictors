@@ -123,7 +123,7 @@ class RefRaster:
 def write_species_stats_as_netcdf(
     sp: SpeciesSet,
     data: list[np.ndarray],
-    ref_raster: RefRaster,
+    ref_raster: xr.DataArray | xr. Dataset,
     out: os.PathLike,
 ) -> None:
     """Write the species stats data to a packed NetCDF."""
@@ -136,18 +136,20 @@ def write_species_stats_as_netcdf(
                 stat,
                 dims=["y", "x"],
                 attrs={
-                    "transform": ref_raster.transform,
-                    "crs": ref_raster.crs,
+                    "transform": ref_raster.rio.transform(),
+                    "crs": ref_raster.rio.crs,
                     "long_name": f"sp{sp.id}_{stat_name}",
                 },
             )
-            .rio.write_crs(ref_raster.crs)
-            .rio.write_transform(ref_raster.transform)
+            .rio.write_transform(ref_raster.rio.transform())
+            .rio.write_crs(ref_raster.rio.crs)
+            .assign_coords({"x": ref_raster.coords["x"], "y": ref_raster.coords["y"]})
         )
+
         data_arrays[f"sp{sp.id}_{stat_name}"] = da
 
     ds = xr.Dataset(data_arrays)
-    ds = ds.rio.write_crs(ref_raster.crs).rio.write_transform(ref_raster.transform)
+    ds = ds.rio.write_crs(ref_raster.rio.crs).rio.write_transform(ref_raster.rio.transform())
 
     # Pack the Dataset and add compression to minimize space requirements
     ds = pack_dataset(ds, nodata=False, signed=False)
@@ -162,7 +164,7 @@ def write_species_stats_as_netcdf(
 def write_handler(
     sp: SpeciesSet,
     data: list[np.ndarray],
-    ref_raster: RefRaster,
+    ref_raster: xr.Dataset | xr.DataArray,
     writer: str,
     out_dir: str | os.PathLike,
 ):
@@ -187,7 +189,7 @@ def write_handler(
         write_species_stats_as_netcdf(sp, data, ref_raster, out)
 
 
-def process_species(
+def process_species( 
     sp_set: SpeciesSet,
     raster_src: str | os.PathLike,
     out_dir: str | os.PathLike,
@@ -197,8 +199,10 @@ def process_species(
     """Process the species data and write the results to disk."""
     sub_log = subprocess_logger(f"sp_{sp_set.id}")
 
+    ref_raster = riox.open_rasterio(raster_src)
+
     with rasterio.open(raster_src) as src:
-        ref_raster = RefRaster(src.crs, src.transform)
+        # ref_raster = RefRaster(src.crs, src.transform)
         points = np.c_[sp_set.df.x, sp_set.df.y]
         cell_counts = get_cell_counts(points, src)
 

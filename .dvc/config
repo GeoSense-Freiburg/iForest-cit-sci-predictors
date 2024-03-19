@@ -1,2 +1,4 @@
 [core]
     remote = nas
+[cache]
+    type = "reflink,symlink,hardlink,copy"

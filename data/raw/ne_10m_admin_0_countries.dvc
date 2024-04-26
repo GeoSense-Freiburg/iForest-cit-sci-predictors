@@ -1,0 +1,6 @@
+outs:
+- md5: 48c3fb520c0949c44178fb2f854edaae.dir
+  size: 9726410
+  nfiles: 7
+  hash: md5
+  path: ne_10m_admin_0_countries
